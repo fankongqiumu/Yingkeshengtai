@@ -2,39 +2,123 @@
 <items version="2" >
 
     <item
-        jar="/home/yanyiheng/下载/SDK/android-sdk-linux/extras/android/m2repository/com/android/support/support-annotations/22.2.1/support-annotations-22.2.1.jar"
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/com.facebook.fresco/fresco/0.6.0/jars/classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="61a0ff5c29295ec56d7e0bd3d25d95dbf71b4b2b">
-        <dex dex="/home/yanyiheng/Yingke/app/build/intermediates/pre-dexed/debug/support-annotations-22.2.1-87f04449ae184261d11507ba1478b8ea450a0b15.jar" />
+        sha1="27ebd5d2c69a1830b4ff47a1d5d4c6a4aab5e233">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/classes-074a370511a80a2b909ca859cf1acb73f86c8016.jar" />
     </item>
     <item
-        jar="/home/yanyiheng/Yingke/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/classes.jar"
+        jar="/home/yanyiheng/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp/okhttp/2.3.0/2e7bc7033dc2c8423e661224171b3133fb155b28/okhttp-2.3.0.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="f8efd0096475e0daf054267b61544e10dc776503">
-        <dex dex="/home/yanyiheng/Yingke/app/build/intermediates/pre-dexed/debug/classes-7defc80ed2731ed3d216b0cfdd3af5637aa787fe.jar" />
+        sha1="2e7bc7033dc2c8423e661224171b3133fb155b28">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/okhttp-2.3.0-2796f902174da6dc488f52816f5093ee83593d37.jar" />
     </item>
     <item
-        jar="/home/yanyiheng/Yingke/app/build/intermediates/exploded-aar/Yingke/library/unspecified/jars/classes.jar"
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/com.facebook.fresco/drawee/0.6.0/jars/classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="767259fd0cd9d5323887b34c975afa553d8f4939">
-        <dex dex="/home/yanyiheng/Yingke/app/build/intermediates/pre-dexed/debug/classes-cf4db06e81d08baf84438c734220e3d88db20dc1.jar" />
+        sha1="d572f92ecb6ae3b66e807550b07e4a6cca1f737f">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/classes-1237c2f72900c897bb5aaa5e2c539d10b665d7a2.jar" />
     </item>
     <item
-        jar="/home/yanyiheng/Yingke/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/jars/classes.jar"
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/com.facebook.fresco/imagepipeline-okhttp/0.6.0/jars/classes.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="4486e953d1f35f8ccab098b1dd67146366d5f731">
-        <dex dex="/home/yanyiheng/Yingke/app/build/intermediates/pre-dexed/debug/classes-42c7f013207997b820a4aaee762ded798d9ecb1e.jar" />
+        sha1="543b4bf48e20cc32db51dbd9138ac181586ebe85">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/classes-85a0d6d0264386060a59559d4c67eb00ea481b31.jar" />
     </item>
     <item
-        jar="/home/yanyiheng/Yingke/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars/libs/internal_impl-22.2.1.jar"
+        jar="/home/yanyiheng/.gradle/caches/modules-2/files-2.1/com.nineoldandroids/library/2.4.0/e9b63380f3a242dbdbf103a2355ad7e43bad17cb/library-2.4.0.jar"
         jumboMode="false"
         revision="21.1.1"
-        sha1="c471eaaba13ff64f6e0383d1c30a9cdc9a97efeb">
-        <dex dex="/home/yanyiheng/Yingke/app/build/intermediates/pre-dexed/debug/internal_impl-22.2.1-e795bc5be0ca5113cb258107c3c08b3a829ec039.jar" />
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/library-2.4.0-079c27ba4ce464768b4d587fcbc59ab5d8bdf6b0.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/libs/gson-2.2.3.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="126d1ea978aa87b87c90f32beac4dc966a318982">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/gson-2.2.3-ee3a81163a75692db026f81421948584b7a1438a.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/libs/internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-11003a50a2bdb5346735a16297e8a765ec3a2dea.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/com.facebook.fresco/imagepipeline/0.6.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="b5eb6c5f132d34f7ece3fbae25feb43e4ea9d6aa">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/classes-625755ed45c8edf19ad3d0239d974ae1bb4111dd.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/libs/Parse-1.9.4.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="56c22930b5d4f77015b6a40c7f14103d3e101001">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/Parse-1.9.4-d5d50ff585adda2c64ede93957c1b21fbeb4c0d6.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.3.0/1b355f73402020c5a0dcca58affc3ec3dfeabac1/okio-1.3.0.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="1b355f73402020c5a0dcca58affc3ec3dfeabac1">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/okio-1.3.0-727e08df04d6c3ba8e63fc59cb074b840ce8c1e9.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/libs/easemobchat_2.2.2.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="6b9388b9b8895ac9551dcc58c70019a83e03204f">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/easemobchat_2.2.2-183bdcb8372c985c7246d6e4a2056d3bc8cf6dc9.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-android/1.1.4/129874135e6081269ace2312092031558865de12/bolts-android-1.1.4.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="129874135e6081269ace2312092031558865de12">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/bolts-android-1.1.4-8f09156b9eebced001b2a0f23cf2d110343d7f28.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/yingke_shengtai/library/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="b374dad760581e291e0f56d3c67ee4004f96c910">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/classes-35ef1150190d79422dc852d6fd46cc98df6048bc.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/classes-9ebad8415b8fbcbe9755245d3714b5dcbe1e9c55.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/下载/SDK/android-sdk-linux/extras/android/m2repository/com/android/support/support-annotations/22.2.0/support-annotations-22.2.0.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/support-annotations-22.2.0-0aabf7b1a87c9652d3f88fe0be2895f80ff95b50.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/com.facebook.fresco/fbcore/0.6.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="87bffaacf21eb2c6fc61cf01930ff96ae175e798">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/classes-2fb4c65450b5ba9e1da61d595c9bc4c05c72c41b.jar" />
+    </item>
+    <item
+        jar="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
+        <dex dex="/home/yanyiheng/android_project/Yingkeshengtai/yingke_shengtai/app/build/intermediates/pre-dexed/debug/classes-7af0065197e060715d57fd1500cc96007b1af68c.jar" />
     </item>
 
 </items>

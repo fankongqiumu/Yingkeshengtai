@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white_color">
+    <com.yingke.shengtai.view.TitleView
+        android:id="@+id/fragment_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        />
+   <!-- <com.yan.heng.android.widget.WaveSwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_swipe"-->
+
+        >
+       <com.yingke.shengtai.view.MyScrollView
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_below="@id/fragment_title">
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent">
+           <include
+               android:id="@+id/headview"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               layout="@layout/guide_detail_head">
+           </include>
+               <com.yingke.shengtai.view.GridView
+                   android:id="@+id/fragment_listView"
+                   android:layout_width="match_parent"
+                   android:layout_below="@id/headview"
+                   android:layout_height="match_parent">
+
+               </com.yingke.shengtai.view.GridView>
+           </RelativeLayout>
+       </com.yingke.shengtai.view.MyScrollView>
+   <!-- </com.yan.heng.android.widget.WaveSwipeRefreshLayout>-->
+</LinearLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="120dp"
+    android:background="@color/main_color"
+    android:orientation="vertical" >
+
+
+        <TextView
+            android:id="@+id/detailmenu_acount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/detailmenu_myacount"
+            android:paddingTop="25dp"
+            android:gravity="center"
+            android:textColor="@color/white_color"
+            android:minEms="3"
+            android:textSize="@dimen/fifty_sp" />
+
+
+        <TextView
+            android:id="@+id/detailmenu_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingTop="25dp"
+            android:gravity="center"
+            android:text="@string/detailmenu_change"
+            android:textColor="@color/white_color"
+            android:textSize="@dimen/fifty_sp" />
+    <TextView
+            android:id="@+id/detailmenu_exit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="25dp"
+            android:paddingBottom="25dp"
+        android:gravity="center"
+            android:layout_centerVertical="true"
+            android:text="@string/detailmenu_exit"
+            android:textColor="@color/white_color"
+            android:textSize="@dimen/fifty_sp" />
+
+
+</LinearLayout>

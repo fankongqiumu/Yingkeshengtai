@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@mipmap/guide_bg"
+    android:gravity="center"
+    android:orientation="vertical">
+<TextView
+    android:id="@+id/title_first"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/white_color"
+    android:text="知识产权法律shiwu"
+    android:textSize="17sp"/>
+    <TextView
+        android:id="@+id/title_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#9effffff"
+        android:text="知识产权法律shiwu"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"/>
+</LinearLayout>
