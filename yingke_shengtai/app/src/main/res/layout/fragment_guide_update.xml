@@ -16,8 +16,9 @@
         >
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <com.yingke.shengtai.view.GridView
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+            <com.yingke.shengtai.view.GuideListView
                 android:id="@+id/fragment_gridview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

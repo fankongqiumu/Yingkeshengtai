@@ -31,6 +31,7 @@ public class IApi {
     public static final String URL_UPDATE_INFOR = URL_BASE + "profile" ; //更新用户信息
     public static final String URL_UPDATE_PASSWORD = URL_BASE + "password" ; //修改密码
     public static final String URL_SOFT_TERMS = URL_BASE + "terms" ; //软件协议
+    public static final String URL_IMID_NAME = URL_BASE + "imdetail" ; //imid--->nickname
 
 
 

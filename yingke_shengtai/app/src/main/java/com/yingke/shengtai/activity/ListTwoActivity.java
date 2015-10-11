@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.yingke.shengtai.moudle.AguideListData;
 import com.yingke.shengtai.moudle.GuideListData;
 import com.yingke.shengtai.R;
 import com.yingke.shengtai.utils.UiUtil;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 public class ListTwoActivity extends Activity {
     private ListView listView;
     private ArrayList<BussinessUpdateActivity.StatusData> statusData;
-    private ArrayList<GuideListData> soursData;
+    private AguideListData soursData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,12 +33,12 @@ public class ListTwoActivity extends Activity {
             if(savedInstanceState.getSerializable("DATA") != null)
                 statusData = (ArrayList<BussinessUpdateActivity.StatusData>)savedInstanceState.getSerializable("DATA");
             else
-                soursData = (ArrayList<GuideListData>)savedInstanceState.getSerializable("DATA1");
+                soursData = (AguideListData)savedInstanceState.getSerializable("DATA1");
         } else {
             if(getIntent().getSerializableExtra("DATA") != null)
                 statusData = (ArrayList<BussinessUpdateActivity.StatusData>)getIntent().getSerializableExtra("DATA");
             else
-                soursData = (ArrayList<GuideListData>)getIntent().getSerializableExtra("DATA1");
+                soursData = (AguideListData)getIntent().getSerializableExtra("DATA1");
         }
         setContentView(R.layout.activity_list);
         initUi();
@@ -140,12 +141,12 @@ public class ListTwoActivity extends Activity {
 
         @Override
         public int getCount() {
-            return soursData.size();
+            return soursData.getChannellist().size();
         }
 
         @Override
         public Object getItem(int i) {
-            return soursData.get(i).getTitle();
+            return soursData.getChannellist().get(i).getTitle();
         }
 
         @Override
@@ -169,7 +170,7 @@ public class ListTwoActivity extends Activity {
             } else {
                 vh = (ViewHolder) view.getTag();
             }
-            vh.textView.setText(soursData.get(i).getTitle());
+            vh.textView.setText(soursData.getChannellist().get(i).getTitle());
             return view;
         }
 

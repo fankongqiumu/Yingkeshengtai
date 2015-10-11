@@ -15,6 +15,7 @@ package com.yingke.shengtai.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,17 +37,30 @@ import com.easemob.chat.ImageMessageBody;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.util.DateUtils;
 import com.easemob.util.EMLog;
+import com.google.gson.reflect.TypeToken;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
+import com.yingke.shengtai.MyApplication;
+import com.yingke.shengtai.api.IApi;
+import com.yingke.shengtai.api.RequestManager;
 import com.yingke.shengtai.db.RobotUser;
 import com.yingke.shengtai.db.SmileUtils;
 import com.yingke.shengtai.db.User;
+import com.yingke.shengtai.moudle.ImidToNickNameData;
 import com.yingke.shengtai.moudle.UserDao;
 import com.yingke.shengtai.R;
 import com.yingke.shengtai.utils.Constant;
 import com.yingke.shengtai.utils.DemoHXSDKHelper;
 import com.yingke.shengtai.utils.HXSDKHelper;
+import com.yingke.shengtai.utils.JosnUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +78,7 @@ public class ChatSaleAdapter extends ArrayAdapter<EMConversation> {
     private boolean notiyfyByFilter;
     private Map<String, User> map;
     private Context context;
+    private UserDao userDao;
 
     public ChatSaleAdapter(Context context, int textViewResourceId, List<EMConversation> objects) {
         super(context, textViewResourceId, objects);
@@ -71,6 +86,7 @@ public class ChatSaleAdapter extends ArrayAdapter<EMConversation> {
         copyConversationList = new ArrayList<EMConversation>();
         copyConversationList.addAll(objects);
         inflater = LayoutInflater.from(context);
+        userDao = new UserDao(context);
     }
     public String getName(String username){
         if(map == null || map.get(username) == null || TextUtils.isEmpty(map.get(username).getNick())){
@@ -144,7 +160,17 @@ public class ChatSaleAdapter extends ArrayAdapter<EMConversation> {
             }
         }
         if(map == null || map.get(username) == null || TextUtils.isEmpty(map.get(username).getNick())){
-            holder.name.setText(username);
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("imid", username);
+            map.put("token", MyApplication.getInstance().getUserInfor().getUserdetail().getToken());
+            if(TextUtils.isEmpty(MyApplication.getInstance().getUserInfor().getUserdetail().getSid())){
+                map.put("sid", "0");
+                map.put("uid", MyApplication.getInstance().getUserInfor().getUserdetail().getUid());
+            } else {
+                map.put("sid", MyApplication.getInstance().getUserInfor().getUserdetail().getSid());
+                map.put("uid", "0");
+            }
+            postRequest(holder.name, username, map);
         } else {
             holder.name.setText(map.get(username).getNick());
         }
@@ -171,6 +197,49 @@ public class ChatSaleAdapter extends ArrayAdapter<EMConversation> {
         }
 
         return convertView;
+    }
+
+    public void postRequest(final TextView text, final String userName, final Map<String, String> map) {
+        FormEncodingBuilder builder = new FormEncodingBuilder();
+        for(Map.Entry<String, String> entry : map.entrySet()) {
+            builder.add(entry.getKey(), entry.getValue());
+        }
+        RequestBody formBody = builder.build();
+        Request request = new Request.Builder()
+                .url(IApi.URL_IMID_NAME)
+                .header("User-Agent", "OkHttp Headers.java")
+                .addHeader("Accept", "application/json")
+                .addHeader("Content-Type", "application/json;charset=utf-8")
+                .addHeader("Content-Length", "length")
+                .post(formBody)
+                .build();
+        RequestManager.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if(response.isSuccessful()){
+               String json = response.body().string();
+               ImidToNickNameData data = JosnUtil.gson.fromJson(json, new TypeToken<ImidToNickNameData>(){}.getType());
+               if(data != null && TextUtils.equals("1", data.getResult() + "")){
+                   try {
+                               User user = new User();
+                               user.setNick(data.getDetaillist().get(0).getDisplayname());
+                               user.setUsername(data.getDetaillist().get(0).getImid());
+                               userDao.saveContactsss(user);
+                       notifyDataSetChanged();
+
+                   } catch ( Exception e){
+
+                   }
+               }
+
+                }
+
+            }
+        });
     }
 
     /**

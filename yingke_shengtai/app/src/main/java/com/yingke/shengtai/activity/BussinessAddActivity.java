@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.gson.reflect.TypeToken;
 import com.yingke.shengtai.MyApplication;
 import com.yingke.shengtai.api.IApi;
+import com.yingke.shengtai.moudle.AguideListData;
 import com.yingke.shengtai.moudle.CustomerListData;
 import com.yingke.shengtai.moudle.GuideListData;
 import com.yingke.shengtai.moudle.ResultSuccessData;
@@ -42,7 +43,7 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
     private static final int REQUEST_SOURCE = 0X6666;
     private String flag;
     private ArrayList<StatusData> statusData;
-    private ArrayList<GuideListData> soursData;
+    private AguideListData soursData;
     private int position, position2;
     private ProgressDialog dialog;
     private boolean bol1 = false;
@@ -119,7 +120,7 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
                 if (TextUtils.equals(getString(R.string.try_agin), json1)) {
                     return;
                 }
-                Type type1 = new TypeToken<ArrayList<GuideListData>>() {}.getType();
+                Type type1 = new TypeToken<AguideListData>() {}.getType();
                 soursData = JosnUtil.gson.fromJson(json1, type1);
                 break;
             case TAG_STATUS:
@@ -190,7 +191,7 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
                     break;
                 case REQUEST_SOURCE:
                     position2 = intent.getBundleExtra("data").getInt("data");
-                    textSouce.setText(soursData.get(position2).getTitle());
+                    textSouce.setText(soursData.getChannellist().get(position2).getTitle());
                     bol2 = true;
                     break;
             }
@@ -212,7 +213,7 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
                 startActivityForResult(intent, REQUEST_STATUS);
                 break;
             case R.id.relsoucre:
-                if(soursData == null || soursData.size() == 0){
+                if(soursData == null || soursData.getChannellist() == null || soursData.getChannellist().size() == 0){
                     MethodUtils.showToast(this, "数据请求中,请稍后...", Toast.LENGTH_SHORT);
                     getData(IApi.NETWORK_METHOD_GET, TAG_SOURCE, IApi.URL_GUIDLIST + "1", null);
                     break;
@@ -313,7 +314,7 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
         map.put("saleamount", saleAmount);
         map.put("text", text);
         if(bol2){
-            map.put("channelid", soursData.get(position2).getCurrentId());
+            map.put("channelid", soursData.getChannellist().get(position2).getId() + "");
         }
         map.put("action", "insert");
         getData(IApi.NETWORK_METHOD_POST, TAG_ADD_BUSSINESS_CUSTOMER, IApi.URL_SALE_BUSSINESS_LIST, map);

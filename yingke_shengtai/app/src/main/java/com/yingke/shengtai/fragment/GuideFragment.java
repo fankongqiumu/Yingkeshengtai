@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.google.gson.reflect.TypeToken;
 import com.yingke.shengtai.adapter.GuideAdapter;
 import com.yingke.shengtai.api.IApi;
+import com.yingke.shengtai.moudle.AguideListData;
 import com.yingke.shengtai.moudle.GuideListData;
 import com.yingke.shengtai.R;
 import com.yingke.shengtai.utils.Constant;
@@ -20,10 +21,12 @@ import com.yingke.shengtai.utils.JosnUtil;
 import com.yingke.shengtai.view.DetailMenuView;
 import com.yingke.shengtai.view.FootView;
 import com.yingke.shengtai.view.GridView;
+import com.yingke.shengtai.view.GuideListView;
 import com.yingke.shengtai.view.TitleView;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
@@ -35,7 +38,7 @@ public class GuideFragment extends BaseFragment implements FootView.LoadingMoreL
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private View parentView;
     private TitleView titleView;
-    private GridView gridView;
+    private GuideListView gridView;
 //    private FootView footView;
 
     private GuideAdapter adapter;
@@ -86,7 +89,7 @@ public class GuideFragment extends BaseFragment implements FootView.LoadingMoreL
         mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) parentView.findViewById(R.id.main_swipe);
         mWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         mWaveSwipeRefreshLayout.setOnRefreshListener(this);
-        gridView = (GridView) parentView.findViewById(R.id.fragment_gridview);
+        gridView = (GuideListView) parentView.findViewById(R.id.fragment_gridview);
 
         titleView.getImagePeople().setOnClickListener(new View.OnClickListener(){
             @Override
@@ -102,7 +105,7 @@ public class GuideFragment extends BaseFragment implements FootView.LoadingMoreL
             }
         });
 
-        type = new TypeToken<ArrayList<GuideListData>>() {}.getType();
+        type = new TypeToken<AguideListData>() {}.getType();
         menu = new DetailMenuView(getActivity());
 
     }
@@ -146,8 +149,8 @@ public class GuideFragment extends BaseFragment implements FootView.LoadingMoreL
         }
         switch (msg.what){
             case TAG_GUIDLIST:
-                ArrayList<GuideListData> listData = JosnUtil.gson.fromJson(json, type);
-                gridView.CreateView(listData);
+                AguideListData listData = JosnUtil.gson.fromJson(json, type);
+                gridView.createView(listData.getChannellist());
                 setRefreFalse();
                 break;
         }

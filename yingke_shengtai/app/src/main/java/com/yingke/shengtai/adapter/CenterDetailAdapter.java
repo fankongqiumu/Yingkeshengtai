@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.yingke.shengtai.MyApplication;
 import com.yingke.shengtai.moudle.CenterDetailData.Medialist;
 import com.yingke.shengtai.R;
@@ -105,6 +106,7 @@ public class CenterDetailAdapter extends BaseAdapter {
                     convertView = LayoutInflater.from(mContext).inflate(R.layout.item_image, null);
                     vh2 = new ViewHolder2();
                     vh2.imageView = (FrescoImageView) convertView.findViewById(R.id.item_image_view);
+//                    vh2.imageView.setFrescoImageScaleType(ScalingUtils.ScaleType.CENTER_CROP);
                     convertView.setTag(vh2);
                     break;
             }

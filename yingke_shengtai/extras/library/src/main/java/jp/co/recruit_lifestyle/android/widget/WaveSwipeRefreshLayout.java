@@ -535,7 +535,7 @@ public class WaveSwipeRefreshLayout extends ViewGroup
   }
 
   /**
-   * @param listener {@link android.view.animation.Animation.AnimationListener}
+   * @param listener {@link Animation.AnimationListener}
    */
   private void startScaleDownAnimation(Animation.AnimationListener listener) {
     Animation scaleDownAnimation = new Animation() {

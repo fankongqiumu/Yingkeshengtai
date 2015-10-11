@@ -39,16 +39,16 @@ class AnimationImageView extends ImageView {
   }
 
   /**
-   * {@link AnimationImageView#mListener} のセット
+   * {@link com.yan.heng.android.widget.AnimationImageView#mListener} のセット
    *
-   * @param listener {@link android.view.animation.Animation.AnimationListener}
+   * @param listener {@link Animation.AnimationListener}
    */
   public void setAnimationListener(Animation.AnimationListener listener) {
     mListener = listener;
   }
 
   /**
-   * ViewのAnimationのStart時にセットされたListenerの {@link android.view.animation.Animation.AnimationListener#onAnimationStart(Animation)}
+   * ViewのAnimationのStart時にセットされたListenerの {@link Animation.AnimationListener#onAnimationStart(Animation)}
    * を呼ぶ
    */
   @Override public void onAnimationStart() {
@@ -59,7 +59,7 @@ class AnimationImageView extends ImageView {
   }
 
   /**
-   * ViewのAnimationのEnd時にセットされたListenerの {@link android.view.animation.Animation.AnimationListener#onAnimationEnd(Animation)}
+   * ViewのAnimationのEnd時にセットされたListenerの {@link Animation.AnimationListener#onAnimationEnd(Animation)}
    * (Animation)} を呼ぶ
    */
   @Override public void onAnimationEnd() {

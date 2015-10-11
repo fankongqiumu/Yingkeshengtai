@@ -124,7 +124,7 @@ public class GuideListDetailActivity2 extends BaseActivity implements WaveSwipeR
                     list.add(tokenizer.nextToken());
                 }
                 if(adapter == null){
-                    adapter = new CenterDetailAdapter(this, list, data.getMedialist(), true, true);
+                    adapter = new CenterDetailAdapter(this, list, data.getMedialist(), false, false);
                     listView.setAdapter(adapter);
                 } else {
                     adapter.setData(list, data.getMedialist());

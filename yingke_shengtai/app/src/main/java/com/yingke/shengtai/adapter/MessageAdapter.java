@@ -387,7 +387,7 @@ public class MessageAdapter extends BaseAdapter{
 		case IMAGE: // 图片
 			handleImageMessage(message, holder, position, convertView);
 			break;
-		case TXT: // 文本
+		case TXT: // 文本text
 			if(((DemoHXSDKHelper)HXSDKHelper.getInstance()).isRobotMenuMessage(message))
 				//含有列表的消息
 				handleRobotMenuMessage(message, holder, position);
