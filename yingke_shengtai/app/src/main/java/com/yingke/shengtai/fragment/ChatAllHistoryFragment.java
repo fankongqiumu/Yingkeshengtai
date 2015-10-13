@@ -12,6 +12,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -48,10 +49,6 @@ import java.util.List;
 
 import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 
-/**
- * 显示所有会话记录，比较简单的实现，更好的可能是把陌生人存入本地，这样取到的聊天记录是可控的
- * 
- */
 public class ChatAllHistoryFragment extends BaseFragment implements OnClickListener, WaveSwipeRefreshLayout.OnRefreshListener{
 
 	private InputMethodManager inputMethodManager;
@@ -142,16 +139,16 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 		// 注册上下文菜单
 		registerForContextMenu(listView);
 
-//		listView.setOnTouchListener(new OnTouchListener() {
-//
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				// 隐藏软键盘
-//				hideSoftKeyboard();
-//				return false;
-//			}
-//
-//		});
+		listView.setOnTouchListener(new View.OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// 隐藏软键盘
+				hideSoftKeyboard();
+				return false;
+			}
+
+		});
 
 	}
 
@@ -172,7 +169,6 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				// 更新が終了したらインジケータ非表示
 				refresh();
 				mWaveSwipeRefreshLayout.setRefreshing(false);
 			}

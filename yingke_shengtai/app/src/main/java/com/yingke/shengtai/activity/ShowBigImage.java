@@ -98,12 +98,12 @@ public class ShowBigImage extends Activity {
 			image.setImageResource(default_res);
 		}
 
-		image.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
+//		findViewById(R.id.root).setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				finish();
+//			}
+//		});
 	}
 	
 	/**

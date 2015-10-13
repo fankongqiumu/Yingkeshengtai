@@ -20,9 +20,20 @@ public class User extends EMContact {
 	private int unreadMsgCount;
 	private String header;
 	private String avatar;
+	private String sex;
+
+
 	
 	public User(){}
-	
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
 	public User(String username){
 	    this.username = username;
 	}

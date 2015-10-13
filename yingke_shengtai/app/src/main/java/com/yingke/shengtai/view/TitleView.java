@@ -26,8 +26,8 @@ public class TitleView extends RelativeLayout implements View.OnClickListener{
     public TitleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         inflate(context, R.layout.view_title, this);
-        this.mContext = context;
-        this.setBackgroundColor(0xFF0A2b4A);
+        this.mContext = context;//0xFF096ABB
+        this.setBackgroundColor(0xFF096ABB);
         titleView = (TextView)findViewById(R.id.view_title_name);
         imagePeople = (ImageView)findViewById(R.id.view_title_people);
         imageBack = (ImageView)findViewById(R.id.view_title_back);

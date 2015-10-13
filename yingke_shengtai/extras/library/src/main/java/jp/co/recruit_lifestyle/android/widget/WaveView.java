@@ -344,7 +344,7 @@ public class WaveView extends View implements ViewTreeObserver.OnPreDrawListener
 
   private void setUpPaint() {
     mPaint = new Paint();
-    mPaint.setColor(0xFF0A2B4A);
+    mPaint.setColor(0xFF096ABB);
     mPaint.setAntiAlias(true);
     mPaint.setStyle(Paint.Style.FILL);
 

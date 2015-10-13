@@ -65,6 +65,8 @@ public class DemoDBManager {
                     values.put(UserDao.COLUMN_NAME_NICK, user.getNick());
                 if(user.getAvatar() != null)
                     values.put(UserDao.COLUMN_NAME_AVATAR, user.getAvatar());
+                if(user.getSex() != null)
+                    values.put(UserDao.COLUMN_NAME_SEX, user.getSex());
                 db.replace(UserDao.TABLE_NAME_INFOR, null, values);
         }
     }

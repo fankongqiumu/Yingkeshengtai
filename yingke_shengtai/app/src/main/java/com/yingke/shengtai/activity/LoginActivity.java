@@ -2,12 +2,15 @@ package com.yingke.shengtai.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +45,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     private EditText editPhone, editSecreate;
     private ProgressDialog dialog;
     private TitleView titleView;
+    private InputMethodManager inputMethodManager;
 
     private Type type;
     private UserInforData data;
@@ -61,9 +65,16 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         editPhone = (EditText)findViewById(R.id.editPhone);
         editSecreate = (EditText)findViewById(R.id.editsecreste);
 
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
         textLogin.setOnClickListener(this);
         textZhuCe.setOnClickListener(this);
         findViewById(R.id.lookpassword).setOnClickListener(this);
+
+        if(!TextUtils.isEmpty(MethodUtils.getString("name", "name"))){
+            editPhone.setText(MethodUtils.getString("name", "name"));
+            editPhone.setSelection(MethodUtils.getString("name", "name").length());
+        }
 
         dialog = new ProgressDialog(this);
         dialog.setMessage("登录中...");
@@ -80,6 +91,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 startActivity(intent);
                 break;
             case R.id.login:
+                hideSoftKeyboard();
                 if(!MethodUtils.isHasNet(this)){
                     MethodUtils.showToast(this, getResources().getString(R.string.no_net), Toast.LENGTH_SHORT);
                     break;
@@ -105,6 +117,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 startActivity(intents);
                 break;
 
+        }
+    }
+
+    void hideSoftKeyboard() {
+        if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            if (getCurrentFocus() != null)
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
@@ -168,6 +188,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                     }
                     MyApplication.getInstance().setUserInfor(data);
                     String password = "";
+                    //保存最新登陆用户的用户名
+                    MethodUtils.setString("name", "name", editPhone.getText().toString().trim());
                     if (TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "2") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "3") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "0")) {
                         password = editSecreate.getText().toString();
                     } else {
@@ -200,7 +222,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                                     if(dialog != null){
                                         dialog.dismiss();
                                     }
-                                    Toast.makeText(getApplicationContext(), "登录成功！", Toast.LENGTH_LONG).show();
                                     MethodUtils.setString(Constant.SHAREDREFERENCE_CONFIG_USER, Constant.SHAREDREFERENCE_CONFIG_USER, json);
 
                                     Intent intent = null;

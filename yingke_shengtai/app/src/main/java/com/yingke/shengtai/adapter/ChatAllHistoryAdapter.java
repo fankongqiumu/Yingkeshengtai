@@ -109,11 +109,6 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 			holder.list_item_layout = (RelativeLayout) convertView.findViewById(R.id.list_item_layout);
 			convertView.setTag(holder);
 		}
-//		if (position % 2 == 0) {
-//			holder.list_item_layout.setBackgroundResource(R.drawable.mm_listitem);
-//		} else {
-//			holder.list_item_layout.setBackgroundResource(R.drawable.mm_listitem_grey);
-//		}
 		if(position ==0){
 			map = new UserDao(context).getContactMapss();
 		}
@@ -161,6 +156,23 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 		} else {
 			holder.name.setText(map.get(username).getNick());
 		}
+		
+		if(!(map == null || map.get(username) == null || TextUtils.isEmpty(map.get(username).getSex()))){
+			String sex = map.get(username).getSex();
+			if(TextUtils.isEmpty(MyApplication.getInstance().getUserInfor().getUserdetail().getSid())){
+				if(TextUtils.equals("0", sex)){
+					holder.avatar.setImageResource(R.mipmap.male_yewu);
+				} else {
+					holder.avatar.setImageResource(R.mipmap.meal_yewu);
+				}
+			} else {
+				if(TextUtils.equals("0", sex)){
+					holder.avatar.setImageResource(R.mipmap.male_customer);
+				} else {
+					holder.avatar.setImageResource(R.mipmap.famel_customer);
+				}
+			}
+		} 
 
 		if (conversation.getUnreadMsgCount() > 0) {
 			// 显示与此用户的消息未读数
@@ -216,6 +228,7 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 							User user = new User();
 							user.setNick(data.getDetaillist().get(0).getDisplayname());
 							user.setUsername(data.getDetaillist().get(0).getImid());
+							user.setSex(data.getDetaillist().get(0).getSex());
 							userDao.saveContactsss(user);
                             notifyDataSetChanged();
 						} catch ( Exception e){

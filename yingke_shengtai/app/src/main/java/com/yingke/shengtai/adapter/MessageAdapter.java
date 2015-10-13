@@ -51,6 +51,7 @@ import com.easemob.chat.TextMessageBody;
 import com.easemob.util.DateUtils;
 import com.easemob.util.DensityUtil;
 import com.easemob.util.EMLog;
+import com.yingke.shengtai.MyApplication;
 import com.yingke.shengtai.activity.AlertDialogActivity;
 import com.yingke.shengtai.activity.ChatActivity;
 import com.yingke.shengtai.activity.ContextMenu;
@@ -337,7 +338,33 @@ public class MessageAdapter extends BaseAdapter{
 		}
 
 		if(message.direct == Direct.SEND){
-			UserUtils.setCurrentUserNick(holder.tv_usernick);
+			if(TextUtils.isEmpty(MyApplication.getInstance().getUserInfor().getUserdetail().getSid())){
+				if(TextUtils.equals("0", message.getStringAttribute("sex", "0"))){
+					holder.iv_avatar.setImageResource(R.mipmap.male_customer);
+				} else {
+					holder.iv_avatar.setImageResource(R.mipmap.famel_customer);
+				}
+			} else {
+				if(TextUtils.equals("0", message.getStringAttribute("sex", "0"))){
+					holder.iv_avatar.setImageResource(R.mipmap.male_yewu);
+				} else {
+					holder.iv_avatar.setImageResource(R.mipmap.meal_yewu);
+				}
+			}
+		} else {
+			if(TextUtils.isEmpty(MyApplication.getInstance().getUserInfor().getUserdetail().getSid())){
+				if(TextUtils.equals("0", message.getStringAttribute("sex", "0"))){
+					holder.iv_avatar.setImageResource(R.mipmap.male_yewu);
+				} else {
+					holder.iv_avatar.setImageResource(R.mipmap.meal_yewu);
+				}
+			} else {
+				if(TextUtils.equals("0", message.getStringAttribute("sex", "0"))){
+					holder.iv_avatar.setImageResource(R.mipmap.male_customer);
+				} else {
+					holder.iv_avatar.setImageResource(R.mipmap.famel_customer);
+				}
+			}
 		}
 
 		// 如果是发送的消息并且不是群聊消息，显示已读textview
@@ -379,9 +406,6 @@ public class MessageAdapter extends BaseAdapter{
 			}
 		}
 		
-		//设置用户头像
-		setUserAvatar(message, holder.iv_avatar);
-
 		switch (message.getType()) {
 		// 根据消息type显示item
 		case IMAGE: // 图片

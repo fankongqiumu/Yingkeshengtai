@@ -427,6 +427,7 @@ public class ChatActivity extends BaseActivity implements WaveSwipeRefreshLayout
 			} else {
 				message.setAttribute("user_name", MyApplication.getInstance().getUserInfor().getUserdetail().getDisplayname());
 			}
+			message.setAttribute("sex", MyApplication.getInstance().getUserInfor().getUserdetail().getSex());
 			TextMessageBody txtBody = new TextMessageBody(content);
 			// 设置消息body
 			message.addBody(txtBody);
@@ -461,7 +462,7 @@ public class ChatActivity extends BaseActivity implements WaveSwipeRefreshLayout
 		} else {
 			message.setAttribute("user_name", MyApplication.getInstance().getUserInfor().getUserdetail().getName());
 		}
-
+		message.setAttribute("sex", MyApplication.getInstance().getUserInfor().getUserdetail().getSex());
 
 		message.setReceipt(to);
 		if(isRobot){
@@ -794,43 +795,6 @@ public class ChatActivity extends BaseActivity implements WaveSwipeRefreshLayout
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
 			switch (scrollState) {
 			case OnScrollListener.SCROLL_STATE_IDLE:
-//				if (view.getFirstVisiblePosition() == 0 && !isloading && haveMoreData && conversation.getAllMessages().size() != 0) {
-//					isloading = true;
-//					loadmorePB.setVisibility(View.VISIBLE);
-//					// sdk初始化加载的聊天记录为20条，到顶时去db里获取更多
-//					List<EMMessage> messages;
-//					EMMessage firstMsg = conversation.getAllMessages().get(0);
-//					try {
-//						// 获取更多messges，调用此方法的时候从db获取的messages
-//						// sdk会自动存入到此conversation中
-//						if (chatType == CHATTYPE_SINGLE)
-//							messages = conversation.loadMoreMsgFromDB(firstMsg.getMsgId(), pagesize);
-//						else
-//							messages = conversation.loadMoreGroupMsgFromDB(firstMsg.getMsgId(), pagesize);
-//					} catch (Exception e1) {
-//						loadmorePB.setVisibility(View.GONE);
-//						return;
-//					}
-//					try {
-//						Thread.sleep(300);
-//					} catch (InterruptedException e) {
-//					}
-//					if (messages.size() != 0) {
-//						// 刷新ui
-//						if (messages.size() > 0) {
-//							adapter.refreshSeekTo(messages.size() - 1);
-//						}
-//
-//						if (messages.size() != pagesize)
-//							haveMoreData = false;
-//					} else {
-//						haveMoreData = false;
-//					}
-//					loadmorePB.setVisibility(View.GONE);
-//					isloading = false;
-//
-//				}
-//				break;
 			}
 		}
 
@@ -888,47 +852,6 @@ public class ChatActivity extends BaseActivity implements WaveSwipeRefreshLayout
 			EMChatManager.getInstance().leaveChatRoom(forward_msg.getTo());
 		}
 	}
-	
-//	/**
-//	 * 监测群组解散或者被T事件
-//	 *
-//	 */
-//	class GroupListener extends GroupRemoveListener{
-//
-//		@Override
-//		public void onUserRemoved(final String groupId, String groupName) {
-//			runOnUiThread(new Runnable() {
-//				String st13 = getResources().getString(R.string.you_are_group);
-//
-//				public void run() {
-//					if (toChatUsername.equals(groupId)) {
-//						Toast.makeText(ChatActivity.this, st13, 1).show();
-//						if (GroupDetailsActivity.instance != null)
-//							GroupDetailsActivity.instance.finish();
-//						finish();
-//					}
-//				}
-//			});
-//		}
-//
-//		@Override
-//		public void onGroupDestroy(final String groupId, String groupName) {
-//			// 群组解散正好在此页面，提示群组被解散，并finish此页面
-//			runOnUiThread(new Runnable() {
-//				String st14 = getResources().getString(R.string.the_current_group);
-//
-//				public void run() {
-//					if (toChatUsername.equals(groupId)) {
-//						Toast.makeText(ChatActivity.this, st14, 1).show();
-//						if (GroupDetailsActivity.instance != null)
-//							GroupDetailsActivity.instance.finish();
-//						finish();
-//					}
-//				}
-//			});
-//		}
-//
-//	}
 
 	public String getToChatUsername() {
 		return toChatUsername;

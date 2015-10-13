@@ -56,6 +56,16 @@ public class ImidToNickNameData implements Serializable {
         private int uid;
         private String displayname;
         private String imid;
+        private String sex;
+
+
+        public String getSex() {
+            return sex;
+        }
+
+        public void setSex(String sex) {
+            this.sex = sex;
+        }
 
         public void setSid(int sid) {
             this.sid = sid;
