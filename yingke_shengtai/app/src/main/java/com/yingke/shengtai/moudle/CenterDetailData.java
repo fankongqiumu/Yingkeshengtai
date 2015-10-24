@@ -23,6 +23,25 @@ public class CenterDetailData implements Serializable {
     private String title;
     private String brief;
     private String text;
+    private String channelname;
+    private String total;
+
+    public String getChannelname() {
+        return channelname;
+    }
+
+    public void setChannelname(String channelname) {
+        this.channelname = channelname;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+
     private ArrayList<Medialist> medialist;
 
     public void setId(String id) {

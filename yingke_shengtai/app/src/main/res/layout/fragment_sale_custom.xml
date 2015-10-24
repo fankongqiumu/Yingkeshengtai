@@ -6,6 +6,7 @@
         android:id="@+id/image_avator"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:background="@drawable/avator_bg"
         android:layout_centerVertical="true"
         android:layout_marginLeft="20dp"
         android:scaleType="centerCrop"/>

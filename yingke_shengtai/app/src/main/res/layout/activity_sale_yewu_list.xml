@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_color"
+    >
+    <com.yingke.shengtai.view.TitleView
+        android:id="@+id/fragment_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        />
+    <jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_swipe"
+        android:layout_below="@id/fragment_title"
+        >
+        <com.yingke.shengtai.view.AnimatedExpandableListView
+            android:id="@+id/fragment_listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout>
+    <TextView
+        android:id="@+id/no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/fragment_title"
+        android:text="@string/no_data"
+        android:textSize="@dimen/sixteen"
+        android:visibility="gone"
+        android:textColor="@color/text_big_color"
+        android:gravity="center"
+        />
+
+</RelativeLayout>

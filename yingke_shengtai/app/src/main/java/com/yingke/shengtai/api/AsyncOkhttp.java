@@ -47,13 +47,19 @@ public class AsyncOkhttp {
         RequestManager.getOkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                re.onException(tag, e.toString());
+                if(re != null){
+                    re.onException(tag, e.toString());
+                }
+
             }
 
             @Override
             public void onResponse(Response response) throws IOException {
                 if(response.isSuccessful()){
-                    re.onCompelete(tag, response.body().string());
+                    if(re != null){
+                        re.onCompelete(tag, response.body().string());
+                    }
+
                 }
             }
         });

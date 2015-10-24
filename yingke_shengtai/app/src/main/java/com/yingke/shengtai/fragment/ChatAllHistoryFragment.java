@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ import com.easemob.chat.EMConversation;
 import com.google.gson.reflect.TypeToken;
 import com.yingke.shengtai.MyApplication;
 import com.yingke.shengtai.activity.ChatActivity;
+import com.yingke.shengtai.activity.CustomerMainActivity;
 import com.yingke.shengtai.adapter.ChatAllHistoryAdapter;
 import com.yingke.shengtai.api.IApi;
 import com.yingke.shengtai.db.InviteMessgeDao;
@@ -87,8 +89,7 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 		conversationList.addAll(loadConversationsWithRecentChat());
 		listView = (ListView) getView().findViewById(R.id.list);
 		listView.addHeaderView(headView);
-		headView.setVisibility(View.GONE);
-		adapter = new ChatAllHistoryAdapter(getActivity(), 1, conversationList);
+		adapter = new ChatAllHistoryAdapter(getActivity(), 1, conversationList, headView, listView);
 		// 设置adapter
 		listView.setAdapter(adapter);
         getData(IApi.NETWORK_METHOD_GET, TAG_SALE_BUSSINESS_LIST, IApi.URL_CUSTOMER_LIST, null);
@@ -114,26 +115,49 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if(position == 0){
-					Intent intent = new Intent(getActivity(), ChatActivity.class);
-					intent.putExtra("userId", data.getSaledetail().getS_imid());
-					intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
-					intent.putExtra("name", data.getSaledetail().getS_showname());
-					startActivity(intent);
+				if(data == null || data.getSaledetail() == null ){
 					return;
 				}
-				EMConversation conversation = adapter.getItem(position - 1);
-				String username = conversation.getUserName();
-				if (username.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getName()))
-					Toast.makeText(getActivity(), st2, Toast.LENGTH_SHORT).show();
-				else {
-				    // 进入聊天页面
-					Intent intent = new Intent(getActivity(), ChatActivity.class);
-					intent.putExtra("userId", username);
-					intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
-					intent.putExtra("name", adapter.getName(username));
-					startActivity(intent);
+				if(listView.getHeaderViewsCount() == 0){
+					EMConversation conversation = adapter.getItem(position);
+					String username = conversation.getUserName();
+					if (username.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getName()))
+						Toast.makeText(getActivity(), st2, Toast.LENGTH_SHORT).show();
+					else {
+						// 进入聊天页面
+						Intent intent = new Intent(getActivity(), ChatActivity.class);
+						intent.putExtra("userId", username);
+						intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
+						intent.putExtra("name", adapter.getName(username));
+						startActivity(intent);
+					}
+				} else if(listView.getHeaderViewsCount() == 1){
+					if(data == null || data.getSaledetail() == null ){
+						return;
+					}
+					if(position == 0){
+						Intent intent = new Intent(getActivity(), ChatActivity.class);
+						intent.putExtra("userId", data.getSaledetail().getS_imid());
+						intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
+						intent.putExtra("name", data.getSaledetail().getS_showname());
+						startActivity(intent);
+
+						return;
+					}
+					EMConversation conversation = adapter.getItem(position - 1);
+					String username = conversation.getUserName();
+					if (username.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getName()))
+						Toast.makeText(getActivity(), st2, Toast.LENGTH_SHORT).show();
+					else {
+						// 进入聊天页面
+						Intent intent = new Intent(getActivity(), ChatActivity.class);
+						intent.putExtra("userId", username);
+						intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
+						intent.putExtra("name", adapter.getName(username));
+						startActivity(intent);
+					}
 				}
+
 			}
 		});
 		// 注册上下文菜单
@@ -146,6 +170,7 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 				// 隐藏软键盘
 				hideSoftKeyboard();
 				return false;
+
 			}
 
 		});
@@ -157,7 +182,9 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 			if (getActivity().getCurrentFocus() != null)
 				inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
 						InputMethodManager.HIDE_NOT_ALWAYS);
+
 		}
+
 	}
 
 	@Override
@@ -194,13 +221,24 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 			deleteMessage = false;
 			handled = true;
 		}
-		EMConversation tobeDeleteCons = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position - 1);
-		// 删除此会话
-		EMChatManager.getInstance().deleteConversation(tobeDeleteCons.getUserName(), tobeDeleteCons.isGroup(), deleteMessage);
-		InviteMessgeDao inviteMessgeDao = new InviteMessgeDao(getActivity());
-		inviteMessgeDao.deleteMessage(tobeDeleteCons.getUserName());
-		adapter.remove(tobeDeleteCons);
-		adapter.notifyDataSetChanged();
+		if(listView.getHeaderViewsCount() >= 1){
+			EMConversation tobeDeleteCons = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position - 1);
+			// 删除此会话
+			EMChatManager.getInstance().deleteConversation(tobeDeleteCons.getUserName(), tobeDeleteCons.isGroup(), deleteMessage);
+			InviteMessgeDao inviteMessgeDao = new InviteMessgeDao(getActivity());
+			inviteMessgeDao.deleteMessage(tobeDeleteCons.getUserName());
+			adapter.remove(tobeDeleteCons);
+			adapter.notifyDataSetChanged();
+		} else {
+			EMConversation tobeDeleteCons = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
+			// 删除此会话
+			EMChatManager.getInstance().deleteConversation(tobeDeleteCons.getUserName(), tobeDeleteCons.isGroup(), deleteMessage);
+			InviteMessgeDao inviteMessgeDao = new InviteMessgeDao(getActivity());
+			inviteMessgeDao.deleteMessage(tobeDeleteCons.getUserName());
+			adapter.remove(tobeDeleteCons);
+			adapter.notifyDataSetChanged();
+		}
+
 
 		// 更新消息未读数
 //		((MainActivity) getActivity()).updateUnreadLabel();
@@ -256,6 +294,12 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 		return list;
 	}
 
+	public void setAdapter(){
+		if(listView != null && adapter != null){
+			listView.setAdapter(adapter);
+		}
+	}
+
 	/**
 	 * 根据最后一条消息的时间排序
 	 * 
@@ -292,20 +336,38 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 		super.onResume();
 		if (!hidden) {
 			refresh();
+			if(adapter != null){
+				conversationList.clear();
+				conversationList.addAll(loadConversationsWithRecentChat());
+				if(conversationList.size() == 0){
+					return;
+				}
+				if(data == null || data.getSaledetail() == null){
+					return;
+				}
+				for (int i= 0; i < conversationList.size(); i++){
+					EMConversation  emcon = conversationList.get(i);
+					if(TextUtils.equals(emcon.getUserName(), data.getSaledetail().getS_imid())){
+						if(headView != null){
+							listView.removeHeaderView(headView);
+							listView.setAdapter(adapter);
+						}
+
+					}
+				}
+
+
+			}
 		}
-//		if (!hidden && ! ((MainActivity)getActivity()).isConflict) {
-//			refresh();
-//		}
+
 	}
 
 	@Override
     public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-//        if(((MainActivity)getActivity()).isConflict){
-//        	outState.putBoolean("isConflict", true);
-//        }else if(((MainActivity)getActivity()).getCurrentAccountRemoved()){
-//        	outState.putBoolean(Constant.ACCOUNT_REMOVED, true);
-//        }
+        if(((CustomerMainActivity)getActivity()).isConflict){
+        	outState.putBoolean("isConflict", true);
+        }
     }
 
     @Override
@@ -325,16 +387,39 @@ public class ChatAllHistoryFragment extends BaseFragment implements OnClickListe
 				if(TextUtils.equals("0", data.getResult())){
 					break;
 				}
+                if(listView.getHeaderViewsCount() <1){
+					break;
+				}
 				((TextView)headView.findViewById(R.id.name)).setText(data.getSaledetail().getS_showname());
 				((TextView)headView.findViewById(R.id.time)).setText(MethodUtils.returnTime(data.getSaledetail().getS_lastim()));
+				if(TextUtils.equals("0", data.getSaledetail().getS_sex())){
+					((ImageView)headView.findViewById(R.id.avatar)).setImageResource(R.mipmap.male_yewu);
+				} else {
+					((ImageView)headView.findViewById(R.id.avatar)).setImageResource(R.mipmap.meal_yewu);
+				}
+				if(adapter != null){
+					conversationList.clear();
+					conversationList.addAll(loadConversationsWithRecentChat());
+					for (int i= 0; i < conversationList.size(); i++){
+						EMConversation  emcon = conversationList.get(i);
+						if(TextUtils.equals(emcon.getUserName(), data.getSaledetail().getS_imid())){
+							if(headView != null){
+								listView.removeHeaderView(headView);
+								listView.setAdapter(adapter);
+							}
 
-				headView.setVisibility(View.VISIBLE);
+						}
+					}
+
+
+				}
 				break;
 		}
 	}
 
 	public class  KeFuData implements Serializable{
 
+		private static final long serialVersionUID = 1993998031278875693L;
 		/**
 		 * result : 1
 		 * message :

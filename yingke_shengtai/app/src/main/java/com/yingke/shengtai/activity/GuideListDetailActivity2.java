@@ -143,6 +143,7 @@ public class GuideListDetailActivity2 extends BaseActivity implements WaveSwipeR
                 User user = new User();
                 user.setNick(message.getSaledetail().getDisplayname());
                 user.setUsername(message.getSaledetail().getImid());
+                user.setSex(message.getSaledetail().getSex());
                 new UserDao(this).saveContactsss(user);
                 Intent intent = new Intent(GuideListDetailActivity2.this, ChatActivity.class);
                 intent.putExtra("userId", message.getSaledetail().getImid());

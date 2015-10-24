@@ -65,7 +65,8 @@ public class AcountActivity extends BaseActivity implements View.OnClickListener
 
         eidtName.setText(MyApplication.getInstance().getUserInfor().getUserdetail().getName());
         editPlace.setText(MyApplication.getInstance().getUserInfor().getUserdetail().getLocation());
-        editSex.setText(TextUtils.equals("1", MyApplication.getInstance().getUserInfor().getUserdetail().getSex()) ? "女":"男");
+        sex = MyApplication.getInstance().getUserInfor().getUserdetail().getSex();
+        editSex.setText(TextUtils.equals("1", sex) ? "女":"男");
         editDisplayname.setText(MyApplication.getInstance().getUserInfor().getUserdetail().getName());
 
         if(!TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1")){
@@ -80,7 +81,7 @@ public class AcountActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void handleMsg(Message msg) {
     String json = msg.getData().getString(Constant.JSON_DATA);
-    if(json != null && json.length() <= 30){
+    if(json != null && json.length() <= 10){
             if(dialog != null && dialog.isShowing()){
                 MethodUtils.showToast(this, getString(R.string.try_agin_agin), Toast.LENGTH_SHORT);
                 dialog.dismiss();;
@@ -93,7 +94,7 @@ public class AcountActivity extends BaseActivity implements View.OnClickListener
                if(dialog != null){
                    dialog.dismiss();
                }
-               if(!TextUtils.equals(data.getResult(), "0")){
+               if(TextUtils.equals(data.getResult(), "1")){
                    MethodUtils.setString(Constant.SHAREDREFERENCE_CONFIG_USER, Constant.SHAREDREFERENCE_CONFIG_USER, json);
                    MyApplication.getInstance().setUserInfor(data);
                    MethodUtils.showToast(this, getString(R.string.success), Toast.LENGTH_SHORT);
@@ -113,8 +114,8 @@ public class AcountActivity extends BaseActivity implements View.OnClickListener
                     MethodUtils.showToast(this, getString(R.string.input_your_name), Toast.LENGTH_SHORT);
                     break;
                 }
-                String sex = editSex.getText().toString().trim();
-                if(TextUtils.isEmpty(sex)){
+                String sexs = editSex.getText().toString().trim();
+                if(TextUtils.isEmpty(sexs)){
                     MethodUtils.showToast(this, getString(R.string.input_your_sex), Toast.LENGTH_SHORT);
                     break;
                 }
@@ -132,7 +133,6 @@ public class AcountActivity extends BaseActivity implements View.OnClickListener
                         break;
                     }
                 }
-
                 sendData(name, sex, place, displayname);
                 if(dialog != null && !dialog.isShowing()){
                     dialog.show();
@@ -167,15 +167,19 @@ public class AcountActivity extends BaseActivity implements View.OnClickListener
 
     private void sendData(String name, String sex, String place, String displayname) {
         Map map = new HashMap<String, String>();
-        map.put("id", MyApplication.getInstance().getUserInfor().getUserdetail().getUid());
+        String Id = MyApplication.getInstance().getUserInfor().getUserdetail().getSid();
+        if(TextUtils.isEmpty(Id)){
+            Id = MyApplication.getInstance().getUserInfor().getUserdetail().getUid();
+        }
+        map.put("id", Id);
         map.put("token",MyApplication.getInstance().getUserInfor().getUserdetail().getToken());
         map.put("usertype",MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype());
         map.put("action","update");
         map.put("name",name);
         map.put("sex",sex);
-        map.put("location",place);
-        if(!TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1")){
-            map.put("displayname",displayname);
+        map.put("location", place);
+        if (!(TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "2") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "3") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "0"))){
+            map.put("displayname", displayname);
         }
         getData(IApi.NETWORK_METHOD_POST, TAG_UPDATE_INFOR, IApi.URL_UPDATE_INFOR, map);
 

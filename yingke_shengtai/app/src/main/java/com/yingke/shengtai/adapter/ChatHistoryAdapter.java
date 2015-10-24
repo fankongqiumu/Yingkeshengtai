@@ -104,6 +104,17 @@ public class ChatHistoryAdapter extends ArrayAdapter<EMContact> {
 		} else {
 			holder.name.setText(map.get(username).getNick());
 		}
+
+		if(!(map == null || map.get(username) == null || TextUtils.isEmpty(map.get(username).getSex()))){
+			String sex = map.get(username).getSex();
+			if(TextUtils.equals("0", sex)){
+				holder.avatar.setImageResource(R.mipmap.male_customer);
+			} else {
+				holder.avatar.setImageResource(R.mipmap.famel_customer);
+			}
+		}
+
+
 		if (conversation.getUnreadMsgCount() > 0) {
 			// 显示与此用户的消息未读数
 			holder.unreadLabel.setText(String.valueOf(conversation.getUnreadMsgCount()));

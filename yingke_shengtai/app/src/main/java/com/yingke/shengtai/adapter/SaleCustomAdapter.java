@@ -2,6 +2,7 @@ package com.yingke.shengtai.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,12 @@ public class SaleCustomAdapter extends BaseAdapter {
         vh.name.setText(data.getName());
         vh.time.setText("注册时间: " + MethodUtils.returnTime(data.getRegdate()));
         vh.phone.setText(data.getMobile());
-        vh.imageView.setBackgroundResource(R.drawable.mini_avatar_shadow);
+        if(TextUtils.equals("0", data.getSex())){
+            vh.imageView.setImageResource(R.mipmap.famel_customer);
+        } else {
+            vh.imageView.setImageResource(R.mipmap.male_customer);
+        }
+
         return view;
     }
 

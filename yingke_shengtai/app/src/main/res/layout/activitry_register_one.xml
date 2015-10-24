@@ -133,6 +133,7 @@
             android:textColor="@color/text_big_color"
             android:hint="@string/login_secreate_write"
             android:background="@null"
+            android:digits="@string/shuru_mima_limit"
             android:textColorHint="@color/text_little_color"/>
     </LinearLayout>
     <View

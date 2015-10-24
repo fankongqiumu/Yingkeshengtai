@@ -79,9 +79,18 @@ public class SaleSearchItemData implements Serializable {
         private String count;
         private String star;
         private String sid;
+        private String salesamount;
 
         public void setId(String id) {
             this.id = id;
+        }
+
+        public String getSalesamount() {
+            return salesamount;
+        }
+
+        public void setSalesamount(String salesamount) {
+            this.salesamount = salesamount;
         }
 
         public void setDate(String date) {

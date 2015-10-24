@@ -26,6 +26,7 @@ import com.yingke.shengtai.utils.MethodUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -108,20 +109,25 @@ public class BussinessUpdateActivity extends BaseActivity implements View.OnClic
         if(!TextUtils.isEmpty(currentData.getDetail().getCusname())){
             editName.setText(currentData.getDetail().getCusname());
         }
-        editPhone.setText(currentData.getDetail().getCusmobile());
+        editPhone.setText(currentData.getDetail().getRefereemobile());
         editTitle.setText(currentData.getDetail().getTitle());
         if(!TextUtils.isEmpty(currentData.getDetail().getRefereename())){
             editRecommentName.setText(currentData.getDetail().getRefereename());
         }
+
         if(!TextUtils.isEmpty(currentData.getDetail().getRefereeamount())){
-            editSaleTotalMoney.setText(currentData.getDetail().getRefereeamount());
+            editSaleTotalMoney.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getRefereeamount())));
         }
         editNumber.setText(currentData.getDetail().getContractid());
         editText.setText(currentData.getDetail().getText());
-        editSaleMoney.setText(currentData.getDetail().getSaleamount());
-        editTotalMoney.setText(currentData.getDetail().getAmount());
-        textSouce.setText(currentData.getDetail().getChannelname());
+        if(!TextUtils.isEmpty(currentData.getDetail().getSaleamount())){
+            editSaleMoney.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getSaleamount())));
+        }
+        if(!TextUtils.isEmpty(currentData.getDetail().getAmount())){
+            editTotalMoney.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getAmount())));
+        }
         textStatus.setText(currentData.getDetail().getStatus());
+        editRecommentPhone.setText(currentData.getDetail().getRefereemobile());
     }
 
     @Override
@@ -284,11 +290,11 @@ public class BussinessUpdateActivity extends BaseActivity implements View.OnClic
                     break;
                 }
                 String refereeMoney = editSaleTotalMoney.getText().toString();
-                String channeId = textSouce.getText().toString();
-                if(TextUtils.isEmpty(channeId)){
-                    MethodUtils.showToast(this, "来源板块不能为空", Toast.LENGTH_SHORT);
-                    break;
-                }
+//                String channeId = textSouce.getText().toString();
+//                if(TextUtils.isEmpty(channeId)){
+//                    MethodUtils.showToast(this, "来源板块不能为空", Toast.LENGTH_SHORT);
+//                    break;
+//                }
                 String textContent = editText.getText().toString();
                 if(TextUtils.isEmpty(textContent)){
                     MethodUtils.showToast(this, "合同内容不能为空", Toast.LENGTH_SHORT);
@@ -299,7 +305,7 @@ public class BussinessUpdateActivity extends BaseActivity implements View.OnClic
                 }
                 sendData(name, phone, contractId, title,
                         status, amount, saleMoney, refereeMoney,
-                        textContent, channeId, refereeName, refereePhone);
+                        textContent, "", refereeName, refereePhone);
                 break;
 
         }
@@ -336,11 +342,11 @@ public class BussinessUpdateActivity extends BaseActivity implements View.OnClic
         map.put("amount", amount);
         map.put("saleamount", saleAmount);
         map.put("text", text);
-        String chaId = currentData.getSaledetail().getChannelid();
-        if(bol2){
-            chaId  = soursData.getChannellist().get(position2).getId() + "";
-        }
-        map.put("channelid", chaId);
+//        String chaId = currentData.getSaledetail().getChannelid();
+//        if(bol2){
+//            chaId  = soursData.getChannellist().get(position2).getId() + "";
+//        }
+//        map.put("channelid", chaId);
 
         if (TextUtils.equals("update", flag)){
             map.put("action","update");

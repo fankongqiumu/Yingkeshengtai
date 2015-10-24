@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +28,7 @@ import com.yingke.shengtai.utils.MethodUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,6 +100,24 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
         } else {
             textTitle.setText("添加合同");
             textAdd.setText("添加");
+            editTotalMoney.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(TextUtils.isEmpty(s.toString())){ return ;}
+                    Double money = Integer.valueOf(s.toString()) * Double.valueOf(MyApplication.getInstance().getUserInfor().getUserdetail().getRate());
+                    editSaleMoney.setText(new DecimalFormat("0.00").format(Double.valueOf(money)));
+                }
+            });
         }
 
         dialog = new ProgressDialog(this);
@@ -264,11 +285,11 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
                     break;
                 }
                 String refereeMoney = editSaleTotalMoney.getText().toString();
-                String channeId = textSouce.getText().toString();
-                if(TextUtils.isEmpty(channeId)){
-                    MethodUtils.showToast(this, "来源板块不能为空", Toast.LENGTH_SHORT);
-                    break;
-                }
+//                String channeId = textSouce.getText().toString();
+//                if(TextUtils.isEmpty(channeId)){
+//                    MethodUtils.showToast(this, "来源板块不能为空", Toast.LENGTH_SHORT);
+//                    break;
+//                }
                 String textContent = editText.getText().toString();
                 if(TextUtils.isEmpty(textContent)){
                     MethodUtils.showToast(this, "合同内容不能为空", Toast.LENGTH_SHORT);
@@ -279,7 +300,7 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
                 }
                 sendData(name, phone, contractId, title,
                         status, amount, saleMoney, refereeMoney,
-                        textContent, channeId, refereeName, refereePhone);
+                        textContent, "", refereeName, refereePhone);
                 break;
 
         }
@@ -313,9 +334,9 @@ public class BussinessAddActivity extends BaseActivity implements View.OnClickLi
         map.put("amount", amount);
         map.put("saleamount", saleAmount);
         map.put("text", text);
-        if(bol2){
-            map.put("channelid", soursData.getChannellist().get(position2).getId() + "");
-        }
+//        if(bol2){
+//            map.put("channelid", soursData.getChannellist().get(position2).getId() + "");
+//        }
         map.put("action", "insert");
         getData(IApi.NETWORK_METHOD_POST, TAG_ADD_BUSSINESS_CUSTOMER, IApi.URL_SALE_BUSSINESS_LIST, map);
 

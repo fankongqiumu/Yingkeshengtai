@@ -161,8 +161,20 @@ public class SaleCustomerDetailActivity extends BaseActivity implements WaveSwip
                 times.setText(MethodUtils.returnTime(data.getUserdetail().getRegdate()));
                 number.setText(data.getBusinessid());
                 progress.setText(data.getStatus());
+                if(TextUtils.equals(data.getStatusvalue(), "-1")){
+                    progress.setBackgroundResource(R.mipmap.dark_red_bg);
+                } else if(TextUtils.equals(data.getStatusvalue(), "200")){
+                    progress.setBackgroundResource(R.drawable.green_bg);
+
+                } else {
+                    progress.setBackgroundResource(R.mipmap.dark_blue_bg);
+                }
                 people.setText(data.getUserdetail().getName());
-                avator.setBackgroundResource(R.drawable.mini_avatar_shadow);
+                if(TextUtils.equals("0", data.getUserdetail().getSex())){
+                    avator.setImageResource(R.mipmap.famel_customer);
+                } else {
+                    avator.setImageResource(R.mipmap.male_customer);
+                }
                 mWaveSwipeRefreshLayout.setRefreshing(false);
                 break;
         }

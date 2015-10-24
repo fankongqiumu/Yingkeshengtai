@@ -80,10 +80,7 @@ public class ChangePassWordActivity extends BaseActivity implements View.OnClick
                     MethodUtils.showToast(this, data.getMessages(), Toast.LENGTH_SHORT);
                 } else {
                     MethodUtils.setString(Constant.SHAREDREFERENCE_CONFIG_USER, Constant.SHAREDREFERENCE_CONFIG_USER, "");
-                    MethodUtils.showToast(this, getString(R.string.success), Toast.LENGTH_SHORT);
-                    Intent intent = new Intent(this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+                    MethodUtils.showToast(this, "修改成功,请下次使用新密码登录", Toast.LENGTH_LONG);
                     this.finish();
                 }
                 break;
@@ -125,7 +122,11 @@ public class ChangePassWordActivity extends BaseActivity implements View.OnClick
 
     private void sendData(String origin, String news) {
         Map map = new HashMap<String, String>();
-        map.put("id", MyApplication.getInstance().getUserInfor().getUserdetail().getUid());
+        String Id = MyApplication.getInstance().getUserInfor().getUserdetail().getSid();
+        if(TextUtils.isEmpty(Id)){
+            Id = MyApplication.getInstance().getUserInfor().getUserdetail().getUid();
+        }
+        map.put("id", Id);
         map.put("token",MyApplication.getInstance().getUserInfor().getUserdetail().getToken());
         map.put("usertype",MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype());
         map.put("action","change");

@@ -21,9 +21,9 @@
   <string name="customer">客户:</string>
   <string name="qianding_time">签订日期: </string>
   <string name="business_comment_name">推荐人</string>
-  <string name="business_totle_price">业务总价格</string>
-  <string name="business_price">业务员价格</string>
-  <string name="business_comment_price">推荐人价格</string>
+  <string name="business_totle_price">总金额</string>
+  <string name="business_price">业务员提成</string>
+  <string name="business_comment_price">推荐人提成</string>
   <string name="business_content">业务内容</string>
   <string name="business_jilu">跟踪记录</string>
   <string name="customer_detail_place">所在地</string>
@@ -87,6 +87,7 @@
   <string name="login_shuoming_three">软件许可及服务协议</string>
   <string name="succes_send">验证码已发送,请注意查看！</string>
   <string name="send_send">后重新发送</string>
+  <string name="shuru_mima_limit">._0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLIMNOPQRSTUVWXYZ</string>
 
 
 

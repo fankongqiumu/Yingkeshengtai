@@ -89,6 +89,7 @@ public class UserInforData implements Serializable{
 
         private String uid;
         private String sid;
+        private String rate;
         private String customerid;
         private String usertype;
         private String name;
@@ -103,6 +104,18 @@ public class UserInforData implements Serializable{
         private String refereename;
         private String keyword;
         private String regdate;
+
+        public void setSid(String sid) {
+            this.sid = sid;
+        }
+
+        public String getRate() {
+            return rate;
+        }
+
+        public void setRate(String rate) {
+            this.rate = rate;
+        }
 
         public void setUid(String uid) {
             this.uid = uid;

@@ -10,7 +10,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
@@ -43,7 +45,6 @@ public class SaleBussinessFragment extends BaseFragment implements FootView.Load
     public static final String TAG = SaleBussinessFragment.class.getSimpleName();
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private View parentView;
-    private TitleView titleView;
     private ListView listView;
     private FootView footView;
 
@@ -54,6 +55,7 @@ public class SaleBussinessFragment extends BaseFragment implements FootView.Load
     private int flag = 1;
     private ArrayList<BusinesslistEntity> list;
     private BussinessListData data;
+    private TextView textTitle, textUpdate;
 
 
     @Override
@@ -70,7 +72,7 @@ public class SaleBussinessFragment extends BaseFragment implements FootView.Load
             }
             return parentView;
         }
-        parentView = inflater.inflate(R.layout.fragment_guide, container, false);
+        parentView = inflater.inflate(R.layout.activity_busssiness_list_add, container, false);
         initUi();
         return parentView;
     }
@@ -92,17 +94,19 @@ public class SaleBussinessFragment extends BaseFragment implements FootView.Load
     }
 
     private void initUi() {
-        titleView = (TitleView) parentView.findViewById(R.id.fragment_title);
-        titleView.setTitleView("业务列表");
-        titleView.getImageBack().setVisibility(View.GONE);
-        titleView.getImagePeople().setVisibility(View.VISIBLE);
-        titleView.getImagePeople().setImageResource(R.mipmap.plus_icon);
+
+        textTitle = (TextView) parentView.findViewById(R.id.view_title_name);
+        textUpdate = (TextView) parentView.findViewById(R.id.textzhuanjie);
+        parentView.findViewById(R.id.view_title_back).setVisibility(View.GONE);
+
+        textTitle.setText("业务列表");
+
         mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) parentView.findViewById(R.id.main_swipe);
         mWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
         mWaveSwipeRefreshLayout.setOnRefreshListener(this);
         listView = (ListView)parentView.findViewById(R.id.fragment_listView);
 
-        titleView.getImagePeople().setOnClickListener(new View.OnClickListener(){
+        textUpdate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), BussinessListFragmntAddActivity.class);

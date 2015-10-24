@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,30 +19,35 @@ import com.easemob.chat.EMChatManager;
 import com.google.gson.reflect.TypeToken;
 import com.yingke.shengtai.MyApplication;
 import com.yingke.shengtai.api.IApi;
+import com.yingke.shengtai.moudle.AguideListData;
 import com.yingke.shengtai.moudle.UserInforData;
 import com.yingke.shengtai.R;
 import com.yingke.shengtai.utils.Constant;
 import com.yingke.shengtai.utils.JosnUtil;
 import com.yingke.shengtai.utils.MethodUtils;
+import com.yingke.shengtai.utils.UiUtil;
 import com.yingke.shengtai.view.TitleView;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by yanyiheng on 15-8-30.
  */
-public class RegistTwoActivity extends BaseActivity implements View.OnClickListener {
+public class RegistTwoActivity extends BaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private static final int REQUEST_CODE_CONTEXT_MENU = 88;
     private String phone, code, secreate, name, place;
     private TextView textZhuce, editSex;
     private EditText editName;
-    private EditText adress;
-    private String add;
     private ProgressDialog dialog;
     private Type type;
     private UserInforData data;
+    private LinearLayout linearlayout;
+    private AguideListData soursData;
+    private CheckBox[] checkBoxes;
+    private ArrayList<CheckBox> list;
 
     private String sex;
 
@@ -46,7 +55,7 @@ public class RegistTwoActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             Intent intent = getIntent();
             phone = intent.getStringExtra(Constant.DATA_PHONE);
             code = intent.getStringExtra(Constant.DATA_CODE);
@@ -61,21 +70,23 @@ public class RegistTwoActivity extends BaseActivity implements View.OnClickListe
         }
         setContentView(R.layout.activity_regis_two);
         initUi();
+        getData(IApi.NETWORK_METHOD_GET, TAG_SOURCE, IApi.URL_GUIDLIST, null);
     }
 
     private void initUi() {
-        editSex = (TextView)findViewById(R.id.sex);
-        editName = (EditText)findViewById(R.id.name);
+        editSex = (TextView) findViewById(R.id.sex);
+        editName = (EditText) findViewById(R.id.name);
 
-        textZhuce = (TextView)findViewById(R.id.zhuce);
-        adress = (EditText) findViewById(R.id.adress);
+        textZhuce = (TextView) findViewById(R.id.zhuce);
+        linearlayout = (LinearLayout) findViewById(R.id.linearlayout);
         textZhuce.setOnClickListener(this);
         editSex.setOnClickListener(this);
         dialog = new ProgressDialog(this);
         TitleView titleView = (TitleView) findViewById(R.id.fragment_title);
         titleView.setTitleView("注册");
 
-        type = new TypeToken<UserInforData>() {}.getType();
+        type = new TypeToken<UserInforData>() {
+        }.getType();
 
     }
 
@@ -110,11 +121,11 @@ public class RegistTwoActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void handleMsg(Message msg) {
         String json = msg.getData().getString(Constant.JSON_DATA);
-        switch (msg.what){
+        switch (msg.what) {
             case ZHUCE_TWO:
                 data = JosnUtil.gson.fromJson(json, type);
-                if(!TextUtils.equals(data.getResult(), "0")){
-                    if(data.getUserdetail() == null && data.getSaledetail() != null){
+                if (!TextUtils.equals(data.getResult(), "0")) {
+                    if (data.getUserdetail() == null && data.getSaledetail() != null) {
                         data.setUserdetail(data.getSaledetail());
                     }
                     MyApplication.getInstance().setUserInfor(data);
@@ -129,7 +140,7 @@ public class RegistTwoActivity extends BaseActivity implements View.OnClickListe
                         public void onSuccess() {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    if(dialog != null){
+                                    if (dialog != null) {
                                         dialog.dismiss();
                                     }
                                     Toast.makeText(getApplicationContext(), "登陆成功！", Toast.LENGTH_LONG).show();
@@ -161,7 +172,7 @@ public class RegistTwoActivity extends BaseActivity implements View.OnClickListe
 
 
                 } else {
-                    if(dialog != null){
+                    if (dialog != null) {
                         dialog.dismiss();
                     }
                     MethodUtils.showToast(this, data.getMessage(), Toast.LENGTH_SHORT);
@@ -170,35 +181,78 @@ public class RegistTwoActivity extends BaseActivity implements View.OnClickListe
                 }
 
                 break;
-            case GET_PHONE_PLACE:
-                place = "未知";
+            case TAG_SOURCE:
+                String json1 = msg.getData().getString(Constant.JSON_DATA);
+                if (TextUtils.equals(getString(R.string.try_agin), json1)) {
+                    return;
+                }
+                Type type1 = new TypeToken<AguideListData>() {
+                }.getType();
+                soursData = JosnUtil.gson.fromJson(json1, type1);
+                initView();
                 break;
+        }
+
+    }
+
+    private void initView() {
+        if (soursData == null || soursData.getChannellist() == null || soursData.getChannellist().size() == 0) {
+            return;
+        }
+        if(list == null ){
+            list = new ArrayList<CheckBox>();
+        } else {
+            list.clear();
+        }
+
+        for (int i = 0; i < soursData.getChannellist().size(); i++) {
+            RelativeLayout linearLayout = new RelativeLayout(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, UiUtil.dip2px(45));
+            linearlayout.addView(linearLayout, params);
+
+            TextView textView = new TextView(this);
+            textView.setTextSize(15);
+            textView.setTextColor(0xFF9b9b9b);
+            textView.setText(soursData.getChannellist().get(i).getShorttitle());
+            RelativeLayout.LayoutParams paramsText = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            paramsText.addRule(RelativeLayout.CENTER_VERTICAL);
+            linearLayout.addView(textView, paramsText);
+
+            checkBoxes = new CheckBox[soursData.getChannellist().size()];
+            checkBoxes[i] = new CheckBox(this);
+            checkBoxes[i].setButtonDrawable(R.drawable.checkbox);
+            list.add(checkBoxes[i]);
+            RelativeLayout.LayoutParams paramsCheckBox = new RelativeLayout.LayoutParams(UiUtil.dip2px(30), UiUtil.dip2px(30));
+            paramsCheckBox.addRule(RelativeLayout.CENTER_VERTICAL);
+            paramsCheckBox.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            linearLayout.addView(checkBoxes[i], paramsCheckBox);
+
+            View view = new View(this);
+            view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1));
+            view.setBackgroundColor(0xFFE0E0E0);
+            linearlayout.addView(view);
+
+
         }
 
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.zhuce:
                 name = editName.getText().toString().trim();
-                if(TextUtils.isEmpty(name)){
+                if (TextUtils.isEmpty(name)) {
                     MethodUtils.showToast(this, getResources().getString(R.string.input_your_name), Toast.LENGTH_SHORT);
                     break;
                 }
                 String sex = editSex.getText().toString().trim();
-                if(TextUtils.isEmpty(sex)){
+                if (TextUtils.isEmpty(sex)) {
                     MethodUtils.showToast(this, getResources().getString(R.string.input_your_sex), Toast.LENGTH_SHORT);
                     break;
 
                 }
-                add = adress.getText().toString().trim();
-                if(TextUtils.isEmpty(add)){
-                    MethodUtils.showToast(this, "请输入您的地址!", Toast.LENGTH_SHORT);
-                    break;
-
-                }
-                if(dialog != null){
+                if (dialog != null) {
                     dialog.setMessage(getResources().getString(R.string.loading));
                     dialog.show();
                 }
@@ -214,6 +268,18 @@ public class RegistTwoActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void askData() {
+        String interstchannel = "";
+        int lenth = list.size();
+        for (int i = 0; i < lenth; i++) {
+            if (list.get(i).isChecked()) {
+                if (i == lenth - 1) {
+                    interstchannel = interstchannel + soursData.getChannellist().get(i).getId();
+                } else {
+                    interstchannel = interstchannel + soursData.getChannellist().get(i).getId() + ",";
+                }
+
+            }
+        }
         Map<String, String> map = new HashMap<String, String>();
         map.put("identcode", code);
         map.put("mobile", phone);
@@ -221,8 +287,13 @@ public class RegistTwoActivity extends BaseActivity implements View.OnClickListe
         map.put("sex", sex);
         map.put("password", secreate);
         map.put("devicenumber", MyApplication.getInstance().getPhoneId());
-        map.put("interstchannel", "10,21,22");
-        map.put("local", add);
-        getData(IApi.NETWORK_METHOD_POST,ZHUCE_TWO,IApi.URL_ZHUCE_TWO,map);
+        map.put("interstchannel", interstchannel);
+        map.put("local", place);
+        getData(IApi.NETWORK_METHOD_POST, ZHUCE_TWO, IApi.URL_ZHUCE_TWO, map);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
     }
 }

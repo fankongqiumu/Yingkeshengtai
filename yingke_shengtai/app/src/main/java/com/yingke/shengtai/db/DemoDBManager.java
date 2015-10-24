@@ -85,10 +85,12 @@ public class DemoDBManager {
                 String username = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_ID));
                 String nick = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_NICK));
                 String avatar = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_AVATAR));
+                String sex = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_SEX));
                 User user = new User();
                 user.setUsername(username);
                 user.setNick(nick);
                 user.setAvatar(avatar);
+                user.setSex(sex);
                 users.put(username, user);
             }
             cursor.close();

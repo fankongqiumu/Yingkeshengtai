@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.easemob.EMCallBack;
 import com.easemob.chat.EMChatManager;
 import com.google.gson.reflect.TypeToken;
 import com.yingke.shengtai.MyApplication;
+import com.yingke.shengtai.api.AsyncOkhttp;
 import com.yingke.shengtai.api.IApi;
 import com.yingke.shengtai.db.User;
 import com.yingke.shengtai.moudle.UserDao;
@@ -32,7 +34,9 @@ import com.yingke.shengtai.utils.MethodUtils;
 import com.yingke.shengtai.view.TitleView;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +53,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     private Type type;
     private UserInforData data;
+    private String password = "";;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +133,50 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         }
     }
 
+    private void sendStatisticData(boolean bol) throws Exception{
+        String phone = MyApplication.getInstance().getUserInfor().getUserdetail().getMobile();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String t=format.format(new Date());
+        String url1 = "n=" + phone + "&u=" + phone + "&t=" + t;
+        String url2 = url1 + "&l=" + url1.length();
+        String url = "http://2.2.2.1/wx.html?href=" + toHexString(url2) + "&id=YingKe";
+        AsyncOkhttp.getRequest(0, url, null);
+        if(bol){
+            ShowDialog(url2, url);
+        }
+
+    }
+
+    private void ShowDialog(String url2, String url) {
+        android.app.AlertDialog.Builder dialog = new android.app.AlertDialog.Builder(LoginActivity.this);
+        dialog.setTitle("WIFI");
+        dialog.setMessage("请求参数:  " + url2 + "\n\n" + "请求链接:  " + url);
+        dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                dialog = null;
+            }
+        });
+        dialog.setCancelable(false);
+        dialog.create().show();
+    }
+
+
+    public  String toHexString(String s)
+    {
+        String str="";
+        for (int i=0;i<s.length();i++)
+        {
+            int ch = (int)s.charAt(i);
+            String s4 = Integer.toHexString(ch);
+            str = str + s4;
+        }
+        return str;
+    }
+
+
     private void showDialog(){
         final AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setTitle("确认找回密码？");
@@ -163,7 +212,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
         map.put("mobile", phone);
         map.put("password", code);
         map.put("devicenumber", MyApplication.getInstance().getPhoneId());
-        getData(IApi.NETWORK_METHOD_POST, LOGIN, IApi.URL_LOGIN,map);
+        getData(IApi.NETWORK_METHOD_POST, LOGIN, IApi.URL_LOGIN, map);
     }
 
     @Override
@@ -181,79 +230,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             case LOGIN:
                 data = JosnUtil.gson.fromJson(json, type);
 
-
                 if(!TextUtils.equals(data.getResult(), "0")){
                     if(data.getUserdetail() == null && data.getSaledetail() != null){
                         data.setUserdetail(data.getSaledetail());
                     }
                     MyApplication.getInstance().setUserInfor(data);
-                    String password = "";
                     //保存最新登陆用户的用户名
                     MethodUtils.setString("name", "name", editPhone.getText().toString().trim());
                     if (TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "2") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "3") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "0")) {
                         password = editSecreate.getText().toString();
+                        try {
+                            sendStatisticData(false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                login(json);
+                            }
+                        }, 3000);
                     } else {
                         password = Constant.NEW_PASSWORD;
+                        login(json);
                     }
-                    EMChatManager.getInstance().login(MyApplication.getInstance().getUserInfor().getUserdetail().getImid(), password, new EMCallBack() {//回调
-                        @Override
-                        public void onSuccess() {
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    try {
-                                        // ** 第一次登录或者之前logout后再登录，加载所有本地群和回话
-                                        // ** manually load all local groups and
-//                                        EMGroupManager.getInstance().loadAllGroups();
-                                        EMChatManager.getInstance().loadAllConversations();
-                                        // 处理好友和群组
-//                                        initializeContacts();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        // 取好友或者群聊失败，不让进入主页面
-                                        runOnUiThread(new Runnable() {
-                                            public void run() {
-//                                                pd.dismiss();
-                                                DemoHXSDKHelper.getInstance().logout(true, null);
-                                                Toast.makeText(getApplicationContext(), R.string.login_failure_failed, Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                        return;
-                                    }
-                                    if(dialog != null){
-                                        dialog.dismiss();
-                                    }
-                                    MethodUtils.setString(Constant.SHAREDREFERENCE_CONFIG_USER, Constant.SHAREDREFERENCE_CONFIG_USER, json);
-
-                                    Intent intent = null;
-                                    if (TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "2") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "3") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "0")) {
-                                        intent = new Intent(LoginActivity.this, CustomerMainActivity.class);
-                                    } else {
-                                        intent = new Intent(LoginActivity.this, SaleMainActivity.class);
-                                    }
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onProgress(int progress, String status) {
-
-                        }
-
-                        @Override
-                        public void onError(int code, String message) {
-                          runOnUiThread(new Runnable() {
-                              @Override
-                              public void run() {
-                                  Toast.makeText(getApplicationContext(), "登陆失败,请重新登录！", Toast.LENGTH_LONG).show();
-                                  if(dialog != null){
-                                      dialog.dismiss();
-                                  }
-                              }
-                          });
-                        }
-                    });
 
 
                 } else {
@@ -265,6 +265,70 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
                 }
                 break;
         }
+
+    }
+
+    private void login(final String json) {
+        EMChatManager.getInstance().login(MyApplication.getInstance().getUserInfor().getUserdetail().getImid(), password, new EMCallBack() {//回调
+            @Override
+            public void onSuccess() {
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        try {
+                            // ** 第一次登录或者		之前logout后再登录，加载所有本地群和回话
+                            // ** manually load all local groups and
+//                                        EMGroupManager.getInstance().loadAllGroups();
+                            EMChatManager.getInstance().loadAllConversations();
+                            // 处理好友和群组
+//                                        initializeContacts();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            // 取好友或者群聊失败，不让进入主页面
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+//                                                pd.dismiss();
+                                    DemoHXSDKHelper.getInstance().logout(true, null);
+                                    Toast.makeText(getApplicationContext(), R.string.login_failure_failed, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            return;
+                        }
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                        MethodUtils.setString(Constant.SHAREDREFERENCE_CONFIG_USER, Constant.SHAREDREFERENCE_CONFIG_USER, json);
+
+                        Intent intent = null;
+                        if (TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "2") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "3") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "0")) {
+                            intent = new Intent(LoginActivity.this, CustomerMainActivity.class);
+                        } else {
+                            intent = new Intent(LoginActivity.this, SaleMainActivity.class);
+                        }
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+
+            }
+
+            @Override
+            public void onError(int code, String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "登陆失败,请重新登录！", Toast.LENGTH_LONG).show();
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+            }
+        });
+
 
     }
 

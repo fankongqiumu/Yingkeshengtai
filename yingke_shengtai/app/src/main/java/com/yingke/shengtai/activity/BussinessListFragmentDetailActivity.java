@@ -34,12 +34,11 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
  * Created by yanyiheng on 15-9-13. 业务列表详情界面
  */
 public class BussinessListFragmentDetailActivity extends BaseActivity implements View.OnClickListener, WaveSwipeRefreshLayout.OnRefreshListener{
-    private TextView yewuNumber, hetongNumber, writeNumber, writePeople, source, progress, time, title;
+    private TextView yewuNumber, hetongNumber, writeNumber, writePeople, progress, time, title, textChage, textTitle;
     private TextView recommentName, totalPrice, price, reCommentPrice, bussinessContent, bussinessJilu;
     private RelativeLayout relContent, relJilu;
     private LinearLayout linearRecommend, linearTotalPrice, linearPrice, recommentPrice;
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
-    private TitleView titleView;
     private BussinessListData.BusinesslistEntity data;
     private BussinessDetailData currentData;
     private Type type;
@@ -57,11 +56,11 @@ public class BussinessListFragmentDetailActivity extends BaseActivity implements
     }
 
     private void initUi() {
-        titleView = (TitleView)findViewById(R.id.fragment_title);
-        titleView.getImagePeople().setImageResource(R.mipmap.pen_icon);
-        titleView.getImagePeople().setVisibility(View.VISIBLE);
-        titleView.getImagePeople().setOnClickListener(this);
-        titleView.setTitleView(data.getTitle());
+        textChage = (TextView) findViewById(R.id.textzhuanjie);
+        textTitle = (TextView) findViewById(R.id.view_title_name);
+        textChage.setOnClickListener(this);
+        textChage.setText("修改");
+        textTitle.setText(data.getTitle());
         title = (TextView)findViewById(R.id.item_text_title);
         time = (TextView)findViewById(R.id.item_text_time);
         progress = (TextView)findViewById(R.id.item_text_progress);
@@ -78,7 +77,6 @@ public class BussinessListFragmentDetailActivity extends BaseActivity implements
 
         relContent = (RelativeLayout)findViewById(R.id.relContent);
         relJilu = (RelativeLayout)findViewById(R.id.relJilu);
-        source = (TextView)findViewById(R.id.source);
 
         mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) findViewById(R.id.main_swipe);
         mWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
@@ -118,6 +116,13 @@ public class BussinessListFragmentDetailActivity extends BaseActivity implements
         type = new TypeToken<BussinessDetailData>(){}.getType();
         mWaveSwipeRefreshLayout.setRefreshing(true);
 
+        findViewById(R.id.view_title_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BussinessListFragmentDetailActivity.this.finish();
+            }
+        });
+
     }
 
     @Override
@@ -151,7 +156,7 @@ public class BussinessListFragmentDetailActivity extends BaseActivity implements
                     setRefreFalse();
                     break;
                 }
-                titleView.setTitleView(currentData.getDetail().getTitle());
+                textTitle.setText(currentData.getDetail().getTitle());
                 title.setText(currentData.getDetail().getTitle());
                 progress.setText(currentData.getDetail().getStatus());
                 time.setText(MethodUtils.returnTime(currentData.getDetail().getCreatedate()));
@@ -167,7 +172,6 @@ public class BussinessListFragmentDetailActivity extends BaseActivity implements
                 hetongNumber.setText(currentData.getDetail().getBusinessid());
                 writeNumber.setText(MethodUtils.returnTime(currentData.getDetail().getCreatedate()));
                 writePeople.setText(currentData.getDetail().getCusname());
-                source.setText(currentData.getDetail().getChannelname());
                 if(TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getSid(), data.getSid())){
                     if(!TextUtils.isEmpty(currentData.getDetail().getRefereename())){
                         recommentName.setText(currentData.getDetail().getRefereename());
@@ -176,8 +180,12 @@ public class BussinessListFragmentDetailActivity extends BaseActivity implements
                         reCommentPrice.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getRefereeamount())));
 
                     }
-                    totalPrice.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getAmount())));
-                    price.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getSaleamount())));
+                    if(!TextUtils.isEmpty(currentData.getDetail().getAmount())){
+                        totalPrice.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getAmount())));
+                    }
+                    if(!TextUtils.isEmpty(currentData.getDetail().getSaleamount())){
+                        price.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getSaleamount())));
+                    }
                     content = currentData.getDetail().getText();
                 }
                 setRefreFalse();
@@ -197,7 +205,7 @@ public class BussinessListFragmentDetailActivity extends BaseActivity implements
                 intent.putExtra("text", content);
                 startActivity(intent);
                 break;
-            case R.id.view_title_people:
+            case R.id.textzhuanjie:
                 intent = new Intent(BussinessListFragmentDetailActivity.this, BussinessListFragmntAddActivity.class);
                 intent.putExtra("DATA", currentData);
                 intent.putExtra("FLAG", "update");

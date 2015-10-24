@@ -67,6 +67,8 @@ import com.yingke.shengtai.utils.Constant;
 import com.yingke.shengtai.utils.DemoHXSDKHelper;
 import com.yingke.shengtai.utils.HXSDKHelper;
 import com.yingke.shengtai.utils.ImageUtils;
+import com.yingke.shengtai.utils.MethodUtils;
+import com.yingke.shengtai.view.TitleView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -121,6 +123,7 @@ public class MessageAdapter extends BaseAdapter{
 
 	private Map<String, Timer> timers = new Hashtable<String, Timer>();
 	private String nickname;
+
 
 	public MessageAdapter(Context context, String username, int chatType, String name) {
 		this.nickname = name;
@@ -328,6 +331,7 @@ public class MessageAdapter extends BaseAdapter{
 					if(message.direct == Direct.RECEIVE){
 						User user = new User();
 						user.setNick(message.getStringAttribute("user_name"));
+						user.setSex(message.getStringAttribute("sex"));
 						user.setUsername(message.getUserName());
 						userDao.saveContactsss(user);
 					}
@@ -352,6 +356,43 @@ public class MessageAdapter extends BaseAdapter{
 				}
 			}
 		} else {
+			if(!TextUtils.isEmpty(message.getStringAttribute("imid", "")) || TextUtils.equals("1", message.getStringAttribute("isKF", ""))){
+
+				if (TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "2") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "3") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "0")) {
+					MethodUtils.showToast(MyApplication.mContext, "现在由" + message.getStringAttribute("transfer_name", "") + "为您服务", Toast.LENGTH_LONG);
+					EMConversation conversations = EMChatManager.getInstance().getConversationByType(username, EMConversation.EMConversationType.Chat);
+					// 把此会话的未读数置为0
+					conversations.markAllMessagesAsRead();
+					User user = new User();
+					user.setNick(message.getStringAttribute("transfer_name", ""));
+					user.setSex(message.getStringAttribute("transfer_sex", ""));
+					user.setUsername(message.getStringAttribute("imid", ""));
+					userDao.saveContactsss(user);
+					Intent intent = new Intent(context, ChatActivity.class);
+					intent.putExtra("userId", message.getStringAttribute("imid", ""));
+					intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
+					intent.putExtra("name", message.getStringAttribute("transfer_name", ""));
+					context.startActivity(intent);
+					conversations.removeMessage(message.getMsgId());
+					((Activity)context).finish();
+				} else {
+					MethodUtils.showToast(MyApplication.mContext, "现在由您为此客户服务", Toast.LENGTH_LONG);
+					EMConversation conversations = EMChatManager.getInstance().getConversationByType(username, EMConversation.EMConversationType.Chat);
+					// 把此会话的未读数置为0
+					conversations.markAllMessagesAsRead();
+
+					Intent intent = new Intent(context, ChatActivity.class);
+					intent.putExtra("userId", message.getStringAttribute("imid", ""));
+					intent.putExtra("chatType", ChatActivity.CHATTYPE_SINGLE);
+					intent.putExtra("name", message.getStringAttribute("transfer_name", ""));
+					context.startActivity(intent);
+					conversations.removeMessage(message.getMsgId());
+					((Activity)context).finish();
+				}
+
+
+			}
+
 			if(TextUtils.isEmpty(MyApplication.getInstance().getUserInfor().getUserdetail().getSid())){
 				if(TextUtils.equals("0", message.getStringAttribute("sex", "0"))){
 					holder.iv_avatar.setImageResource(R.mipmap.male_yewu);

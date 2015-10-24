@@ -13,27 +13,32 @@
  */
 package com.yingke.shengtai.db;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.easemob.util.ImageUtils;
 import com.yingke.shengtai.photoview.PhotoView;
 import com.yingke.shengtai.R;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 public class LoadLocalBigImgTask extends AsyncTask<Void, Void, Bitmap> {
 
 	private ProgressBar pb;
-	private PhotoView photoView;
+	private ImageView photoView;
 	private String path;
 	private int width;
 	private int height;
 	private Context context;
 
-	public LoadLocalBigImgTask(Context context,String path, PhotoView photoView,
+	public LoadLocalBigImgTask(Context context,String path, ImageView photoView,
 			ProgressBar pb, int width, int height) {
 		this.context = context;
 		this.path = path;
@@ -63,6 +68,11 @@ public class LoadLocalBigImgTask extends AsyncTask<Void, Void, Bitmap> {
 		return bitmap;
 	}
 
+	private class MatrixChangeListener implements PhotoViewAttacher.OnMatrixChangedListener {
+		public void onMatrixChanged(RectF rect) {
+		}
+	}
+
 	@Override
 	protected void onPostExecute(Bitmap result) {
 		super.onPostExecute(result);
@@ -74,5 +84,26 @@ public class LoadLocalBigImgTask extends AsyncTask<Void, Void, Bitmap> {
 			result = BitmapFactory.decodeResource(context.getResources(),
 					R.mipmap.signin_local_gallry);
 		photoView.setImageBitmap(result);
+		PhotoViewAttacher mAttacher = new PhotoViewAttacher(photoView);
+		mAttacher.setOnMatrixChangeListener(new MatrixChangeListener());
+		mAttacher.setOnPhotoTapListener(new PhotoTapListener());
+	}
+
+	/**图片监听**/
+	private class PhotoTapListener implements PhotoViewAttacher.OnPhotoTapListener {
+		@Override
+		public void onPhotoTap(View view, float x, float y) {
+			photoView = null;
+			if (context != null) {
+				((Activity)context).finish();
+			}
+		}
+//		@Override
+//		public void onBlockTap() {
+//			mImageOrigin = null;
+//			if (PhotoViewActivity.this != null) {
+//				PhotoViewActivity.this.finish();
+//			}
+//		}
 	}
 }

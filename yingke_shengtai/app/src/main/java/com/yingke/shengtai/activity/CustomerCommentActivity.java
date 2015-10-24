@@ -121,7 +121,11 @@ public class CustomerCommentActivity extends BaseActivity implements View.OnClic
         time.setText(MethodUtils.returnTime(customerData.getUserdetail().getRegdate()));
 
 
-        avator.setImageResource(R.drawable.mini_avatar_shadow);
+        if(TextUtils.equals("0", customerData.getUserdetail().getSex())){
+            avator.setImageResource(R.mipmap.famel_customer);
+        } else {
+            avator.setImageResource(R.mipmap.male_customer);
+        }
     }
 
 

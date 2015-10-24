@@ -60,6 +60,8 @@ public class SaleSearchAdapter extends BaseAdapter {
             vh.text1 = (TextView)view.findViewById(R.id.text1);
             vh.time = (TextView)view.findViewById(R.id.time);
             vh.text2 = (TextView)view.findViewById(R.id.text2);
+            vh.text11 = (TextView) view.findViewById(R.id.text11);
+            vh.text12 = (TextView) view.findViewById(R.id.text12);
             view.setTag(vh);
         } else {
             vh = (ViewHolder)view.getTag();
@@ -69,7 +71,9 @@ public class SaleSearchAdapter extends BaseAdapter {
             vh.text1.setText("业绩总额：" + "RMB " + new DecimalFormat("0.00").format(Double.valueOf(data.getAmount())));
         }
         vh.time.setText(MethodUtils.returnTime2(data.getDate()));
-        vh.text2.setText("满意度：" + data.getCount());
+        vh.text2.setText("满意度：" + new DecimalFormat("0.00").format(Double.valueOf(data.getStar())));
+        vh.text11.setText("业务员提成：" + new DecimalFormat("0.00").format(Double.valueOf(data.getSalesamount())));
+        vh.text12.setText("业务数：" + (TextUtils.isEmpty(data.getCount()) ? 0 : data.getCount()));
         return view;
     }
 
@@ -87,6 +91,6 @@ public class SaleSearchAdapter extends BaseAdapter {
     }
 
     static class ViewHolder{
-        TextView text1, text2, time;
+        TextView text1, text2, time, text11, text12;
     }
 }

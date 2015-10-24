@@ -95,7 +95,7 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                     break;
                 }
                 CityData data1 = JosnUtil.gson.fromJson(jsons.substring(jsons.indexOf("{"), jsons.indexOf("}") + 1), new TypeToken<CityData>(){}.getType());
-                if(TextUtils.isEmpty(data1.getProvince()) || TextUtils.isEmpty(data1.getCityname())){
+                if(TextUtils.isEmpty(data1.getProvince()) && TextUtils.isEmpty(data1.getCityname())){
                     break;
                 }
                 cityAdress = data1.getProvince() + " " + data1.getCityname();
@@ -139,6 +139,9 @@ public class RegistActivity extends BaseActivity implements View.OnClickListener
                 inten.putExtra(Constant.DATA_PHONE, phones);
                 inten.putExtra(Constant.DATA_CODE, code);
                 inten.putExtra(Constant.DATA_SECREATE, secreate);
+                if(TextUtils.isEmpty(cityAdress)){
+                    cityAdress = "未知";
+                }
                 inten.putExtra(Constant.DATA_ADRESS, cityAdress);
                 startActivity(inten);
                 break;

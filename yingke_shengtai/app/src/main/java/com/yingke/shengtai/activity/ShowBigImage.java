@@ -17,6 +17,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.easemob.EMCallBack;
@@ -40,6 +42,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 /**
  * 下载显示大图
  * 
@@ -47,7 +51,7 @@ import java.util.Map;
 public class ShowBigImage extends Activity {
 	private static final String TAG = "ShowBigImage"; 
 	private ProgressDialog pd;
-	private PhotoView image;
+	private ImageView image;
 	private int default_res = R.mipmap.default_image;
 	private String localFilePath;
 	private Bitmap bitmap;
@@ -61,7 +65,7 @@ public class ShowBigImage extends Activity {
 		setContentView(R.layout.activity_show_big_image);
 
 
-		image = (PhotoView) findViewById(R.id.image);
+		image = (ImageView) findViewById(R.id.image);
 		loadLocalPb = (ProgressBar) findViewById(R.id.pb_load_local);
 		default_res = getIntent().getIntExtra("default_image", R.mipmap.default_avatar);
 		Uri uri = getIntent().getParcelableExtra("uri");
@@ -86,6 +90,9 @@ public class ShowBigImage extends Activity {
 				}
 			} else {
 				image.setImageBitmap(bitmap);
+				PhotoViewAttacher mAttacher = new PhotoViewAttacher(image);
+				mAttacher.setOnMatrixChangeListener(new MatrixChangeListener());
+				mAttacher.setOnPhotoTapListener(new PhotoTapListener());
 			}
 		} else if (remotepath != null) { //去服务器下载图片
 			EMLog.d(TAG, "download remote image");
@@ -104,6 +111,24 @@ public class ShowBigImage extends Activity {
 //				finish();
 //			}
 //		});
+	}
+
+	/**图片监听**/
+	private class PhotoTapListener implements PhotoViewAttacher.OnPhotoTapListener {
+		@Override
+		public void onPhotoTap(View view, float x, float y) {
+			image = null;
+			if (ShowBigImage.this != null) {
+				ShowBigImage.this.finish();
+			}
+		}
+//		@Override
+//		public void onBlockTap() {
+//			mImageOrigin = null;
+//			if (PhotoViewActivity.this != null) {
+//				PhotoViewActivity.this.finish();
+//			}
+//		}
 	}
 	
 	/**
@@ -157,9 +182,14 @@ public class ShowBigImage extends Activity {
 						if (pd != null) {
 							pd.dismiss();
 						}
+						PhotoViewAttacher mAttacher = new PhotoViewAttacher(image);
+						mAttacher.setOnMatrixChangeListener(new MatrixChangeListener());
+						mAttacher.setOnPhotoTapListener(new PhotoTapListener());
 					}
 				});
 			}
+
+
 
 			public void onError(int error, String msg) {
 				EMLog.e(TAG, "offline file transfer error:" + msg);
@@ -191,6 +221,11 @@ public class ShowBigImage extends Activity {
 
 	    EMChatManager.getInstance().downloadFile(remoteFilePath, localFilePath, headers, callback);
 
+	}
+
+	private class MatrixChangeListener implements PhotoViewAttacher.OnMatrixChangedListener {
+		public void onMatrixChanged(RectF rect) {
+		}
 	}
 
 	@Override

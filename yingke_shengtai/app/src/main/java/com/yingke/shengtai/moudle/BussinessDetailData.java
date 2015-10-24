@@ -83,6 +83,7 @@ public class BussinessDetailData implements Serializable {
          * channelname :
          * refereeid : 0
          * refereename : 推荐人
+         * refereemobile
          * amount : 15000
          * saleamount : 2560.38
          * refereeamount : 1200.99
@@ -111,6 +112,7 @@ public class BussinessDetailData implements Serializable {
         private String saleamount;
         private String refereeamount;
         private String text;
+        private String refereemobile;
         private int star;
 
         public void setBid(String bid) {
@@ -143,6 +145,14 @@ public class BussinessDetailData implements Serializable {
 
         public void setTitle(String title) {
             this.title = title;
+        }
+
+        public String getRefereemobile() {
+            return refereemobile;
+        }
+
+        public void setRefereemobile(String refereemobile) {
+            this.refereemobile = refereemobile;
         }
 
         public void setSid(String sid) {

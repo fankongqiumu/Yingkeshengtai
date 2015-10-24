@@ -14,6 +14,8 @@
 package com.yingke.shengtai.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,6 +81,17 @@ public class ChatSaleAdapter extends ArrayAdapter<EMConversation> {
     private Map<String, User> map;
     private Context context;
     private UserDao userDao;
+
+    Handler UIHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 0) {
+                notifyDataSetChanged();
+            }
+        }
+    };
+
 
     public ChatSaleAdapter(Context context, int textViewResourceId, List<EMConversation> objects) {
         super(context, textViewResourceId, objects);
@@ -171,9 +184,36 @@ public class ChatSaleAdapter extends ArrayAdapter<EMConversation> {
                 map.put("uid", "0");
             }
             postRequest(holder.name, username, map);
+            holder.name.setText("");
         } else {
             holder.name.setText(map.get(username).getNick());
         }
+
+        if(!(map == null || map.get(username) == null || TextUtils.isEmpty(map.get(username).getSex()))){
+            String sex = map.get(username).getSex();
+            if(TextUtils.equals("0", sex)){
+                holder.avatar.setImageResource(R.mipmap.famel_customer);
+            } else {
+                holder.avatar.setImageResource(R.mipmap.male_customer);
+            }
+            holder.avatar.setVisibility(View.VISIBLE);
+        } else {
+            if((map != null &&  map.get(username) != null) && !TextUtils.isEmpty(map.get(username).getNick())){
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("imid", username);
+                map.put("token", MyApplication.getInstance().getUserInfor().getUserdetail().getToken());
+                if(TextUtils.isEmpty(MyApplication.getInstance().getUserInfor().getUserdetail().getSid())){
+                    map.put("sid", "0");
+                    map.put("uid", MyApplication.getInstance().getUserInfor().getUserdetail().getUid());
+                } else {
+                    map.put("sid", MyApplication.getInstance().getUserInfor().getUserdetail().getSid());
+                    map.put("uid", "0");
+                }
+                postRequest(holder.name, username, map);
+            }
+            holder.avatar.setVisibility(View.INVISIBLE);
+        }
+
         if (conversation.getUnreadMsgCount() > 0) {
             // 显示与此用户的消息未读数
             holder.unreadLabel.setText(String.valueOf(conversation.getUnreadMsgCount()));
@@ -227,9 +267,10 @@ public class ChatSaleAdapter extends ArrayAdapter<EMConversation> {
                    try {
                                User user = new User();
                                user.setNick(data.getDetaillist().get(0).getDisplayname());
-                               user.setUsername(data.getDetaillist().get(0).getImid());
+                       user.setUsername(data.getDetaillist().get(0).getImid());
+                       user.setSex(data.getDetaillist().get(0).getSex());
                                userDao.saveContactsss(user);
-                       notifyDataSetChanged();
+                       UIHandler.sendEmptyMessage(0);
 
                    } catch ( Exception e){
 

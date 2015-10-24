@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +28,7 @@ import com.yingke.shengtai.utils.MethodUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,6 +101,24 @@ public class BussinessListFragmntAddActivity extends BaseActivity implements Vie
         } else {
             textTitle.setText("添加合同");
             textAdd.setText("添加");
+            editTotalMoney.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(TextUtils.isEmpty(s.toString())){ return; }
+                    Double money = Integer.valueOf(s.toString()) * Double.valueOf(MyApplication.getInstance().getUserInfor().getUserdetail().getRate());
+                    editSaleMoney.setText(new DecimalFormat("0.00").format(Double.valueOf(money)));
+                }
+            });
         }
 
         dialog = new ProgressDialog(this);
@@ -114,15 +135,21 @@ public class BussinessListFragmntAddActivity extends BaseActivity implements Vie
             editRecommentName.setText(currentData.getDetail().getRefereename());
         }
         if(!TextUtils.isEmpty(currentData.getDetail().getRefereeamount())){
-            editSaleTotalMoney.setText(currentData.getDetail().getRefereeamount());
+            editSaleTotalMoney.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getRefereeamount())));
         }
         editNumber.setText(currentData.getDetail().getContractid());
         editText.setText(currentData.getDetail().getText());
-        editSaleMoney.setText(currentData.getDetail().getSaleamount());
-        editTotalMoney.setText(currentData.getDetail().getAmount());
-        textSouce.setText(currentData.getDetail().getChannelname());
+        if(!TextUtils.isEmpty(currentData.getDetail().getSaleamount())){
+            editSaleMoney.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getSaleamount())));
+        }
+        if(!TextUtils.isEmpty(currentData.getDetail().getAmount())){
+            editTotalMoney.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getAmount())));
+        }
         textStatus.setText(currentData.getDetail().getStatus());
+        editRecommentPhone.setText(currentData.getDetail().getRefereemobile());
     }
+
+
 
     @Override
     protected void onStart() {
@@ -284,11 +311,11 @@ public class BussinessListFragmntAddActivity extends BaseActivity implements Vie
                     break;
                 }
                 String refereeMoney = editSaleTotalMoney.getText().toString();
-                String channeId = textSouce.getText().toString();
-                if(TextUtils.isEmpty(channeId)){
-                    MethodUtils.showToast(this, "来源板块不能为空", Toast.LENGTH_SHORT);
-                    break;
-                }
+//                String channeId = textSouce.getText().toString();
+//                if(TextUtils.isEmpty(channeId)){
+//                    MethodUtils.showToast(this, "来源板块不能为空", Toast.LENGTH_SHORT);
+//                    break;
+//                }
                 String textContent = editText.getText().toString();
                 if(TextUtils.isEmpty(textContent)){
                     MethodUtils.showToast(this, "合同内容不能为空", Toast.LENGTH_SHORT);
@@ -299,7 +326,7 @@ public class BussinessListFragmntAddActivity extends BaseActivity implements Vie
                 }
                 sendData(name, phone, contractId, title,
                         status, amount, saleMoney, refereeMoney,
-                        textContent, channeId, refereeName, refereePhone);
+                        textContent, "", refereeName, refereePhone);
                 break;
 
         }
@@ -335,11 +362,11 @@ public class BussinessListFragmntAddActivity extends BaseActivity implements Vie
         map.put("amount", amount);
         map.put("saleamount", saleAmount);
         map.put("text", text);
-        if(bol2){
-            map.put("channelid", soursData.getChannellist().get(position2).getId() + "");
-        } else {
-            map.put("channelid", currentData.getDetail().getChanneltype());
-        }
+//        if(bol2){
+//            map.put("channelid", soursData.getChannellist().get(position2).getId() + "");
+//        } else {
+//            map.put("channelid", currentData.getDetail().getChanneltype());
+//        }
 
         if (TextUtils.equals("update", flag)){
             map.put("action","update");

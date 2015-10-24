@@ -292,6 +292,7 @@
                     android:textColor="@color/text_big_color"
                     android:background="@null"
                     android:gravity="bottom"
+                    android:digits="1234567890"
                     android:inputType="number"
                     android:textSize="17sp"/>
             </LinearLayout>
@@ -312,7 +313,7 @@
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:textSize="16sp"
-                    android:text="销售提成"
+                    android:text="业务员提成"
                     android:gravity="bottom"
                     android:textColor="@color/text_big_color"/>
                 <EditText
@@ -322,6 +323,7 @@
                     android:textColor="@color/text_big_color"
                     android:background="@null"
                     android:gravity="bottom"
+                    android:digits="1234567890"
                     android:inputType="number"
                     android:textSize="17sp"/>
             </LinearLayout>
@@ -350,6 +352,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="bottom"
+                    android:digits="1234567890"
                     android:textColor="@color/text_big_color"
                     android:background="@null"
                     android:inputType="number"
@@ -361,6 +364,7 @@
                 android:layout_marginRight="17dp"
                 android:layout_marginLeft="17dp"
                 android:background="#e0e0e0"
+                android:visibility="gone"
                 />
             <RelativeLayout
                 android:id="@+id/relsoucre"
@@ -368,6 +372,7 @@
                 android:layout_height="50dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="20dp"
+                android:visibility="gone"
                 >
                 <TextView
                     android:id="@+id/sourece"

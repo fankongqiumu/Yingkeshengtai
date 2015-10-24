@@ -28,4 +28,5 @@ dependencies {
     compile files('libs/gson-2.2.3.jar')
     compile files('libs/easemobchat_2.2.2.jar')
     compile files('libs/Parse-1.9.4.jar')
+    compile 'com.commit451:PhotoView:1.2.4'
 }

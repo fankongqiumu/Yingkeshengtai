@@ -1,6 +1,9 @@
 package com.yingke.shengtai.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,11 +11,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.easemob.EMConnectionListener;
+import com.easemob.EMError;
+import com.easemob.EMEventListener;
+import com.easemob.EMNotifierEvent;
 import com.easemob.EMValueCallBack;
 import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMConversation;
+import com.easemob.chat.EMMessage;
 import com.easemob.util.HanziToPinyin;
 import com.yingke.shengtai.db.User;
 import com.yingke.shengtai.fragment.ChatSaleHistoryFragment;
@@ -35,19 +45,40 @@ import java.util.Map;
 /**
  * Created by yanyiheng on 15-8-16.
  */
-public class SaleMainActivity extends FragmentActivity {
+public class SaleMainActivity extends FragmentActivity implements EMEventListener {
     private NavBottomView navbottom;
 
     private Fragment oldFragment;
     private MyConnectionListener connectionListener = null;
 
     private static boolean isExit;
+    // 账号在别处登录
+    public boolean isConflict = false;
+    // 未读消息textview
+    private TextView unreadLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null && savedInstanceState.getBoolean(Constant.ACCOUNT_REMOVED, false)) {
+            // 防止被移除后，没点确定按钮然后按了home键，长期在后台又进app导致的crash
+            // 三个fragment里加的判断同理
+            DemoHXSDKHelper.getInstance().logout(true, null);
+            finish();
+            startActivity(new Intent(this, LoginActivity.class));
+            return;
+        } else if (savedInstanceState != null && savedInstanceState.getBoolean("isConflict", false)) {
+            // 防止被T后，没点确定按钮然后按了home键，长期在后台又进app导致的crash
+            // 三个fragment里加的判断同理
+            finish();
+            startActivity(new Intent(this, LoginActivity.class));
+            return;
+        }
         setContentView(R.layout.activity_salemain);
         initUi();
+        if (getIntent().getBooleanExtra("conflict", false) && !isConflictDialogShow) {
+            showConflictDialog();
+        }
         initPage();
         connectionListener = new MyConnectionListener();
         EMChatManager.getInstance().addConnectionListener(connectionListener);
@@ -55,12 +86,21 @@ public class SaleMainActivity extends FragmentActivity {
 
     private void initUi() {
         navbottom = (NavBottomView) findViewById(R.id.activity_main_navbottom);
+        unreadLabel = (TextView)navbottom.findViewById(R.id.unread_msg_number_sale);
     }
 
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
         exit();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (getIntent().getBooleanExtra("conflict", false) && !isConflictDialogShow) {
+            showConflictDialog();
+        }
     }
 
     private void exit() {
@@ -163,6 +203,21 @@ public class SaleMainActivity extends FragmentActivity {
         this.getSupportFragmentManager().executePendingTransactions();
     }
 
+    @Override
+    protected void onStop() {
+        EMChatManager.getInstance().unregisterEventListener(this);
+        DemoHXSDKHelper sdkHelper = (DemoHXSDKHelper) DemoHXSDKHelper.getInstance();
+        sdkHelper.popActivity(this);
+
+        super.onStop();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("isConflict", isConflict);
+        super.onSaveInstanceState(outState);
+    }
+
     static void asyncFetchContactsFromServer() {
         HXSDKHelper.getInstance().asyncFetchContactsFromServer(new EMValueCallBack<List<String>>() {
 
@@ -244,6 +299,159 @@ public class SaleMainActivity extends FragmentActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isConflict) {
+            updateUnreadLabel();
+            EMChatManager.getInstance().activityResumed();
+        }
+
+        // unregister this event listener when this activity enters the
+        // background
+        DemoHXSDKHelper sdkHelper = (DemoHXSDKHelper) DemoHXSDKHelper.getInstance();
+        sdkHelper.pushActivity(this);
+
+        // register the event listener when enter the foreground
+        EMChatManager.getInstance().registerEventListener(this,
+                new EMNotifierEvent.Event[]{EMNotifierEvent.Event.EventNewMessage, EMNotifierEvent.Event.EventOfflineMessage, EMNotifierEvent.Event.EventConversationListChanged});
+    }
+
+    /**
+     * 监听事件
+     */
+    @Override
+    public void onEvent(EMNotifierEvent event) {
+        switch (event.getEvent()) {
+            case EventNewMessage: // 普通消息
+            {
+                EMMessage message = (EMMessage) event.getData();
+
+                // 提示新消息
+                HXSDKHelper.getInstance().getNotifier().onNewMsg(message);
+
+                refreshUI();
+                break;
+            }
+
+            case EventOfflineMessage: {
+                refreshUI();
+                break;
+            }
+
+            case EventConversationListChanged: {
+                refreshUI();
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    private void refreshUI() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                // 刷新bottom bar消息未读数
+                updateUnreadLabel();
+                if (oldFragment != null && oldFragment instanceof ChatSaleHistoryFragment) {
+                    // 当前页面如果为聊天历史页面，刷新此页面
+                    ((ChatSaleHistoryFragment)oldFragment).refresh();
+                }
+            }
+        });
+    }
+
+    private android.app.AlertDialog.Builder conflictBuilder;
+    private android.app.AlertDialog.Builder accountRemovedBuilder;
+    public boolean isConflictDialogShow;
+    private boolean isAccountRemovedDialogShow;
+    private BroadcastReceiver internalDebugReceiver;
+
+    /**
+     * 显示帐号在别处登录dialog
+     */
+    private void showConflictDialog() {
+        isConflictDialogShow = true;
+        DemoHXSDKHelper.getInstance().logout(false, null);
+        String st = getResources().getString(R.string.Logoff_notification);
+        if (!SaleMainActivity.this.isFinishing()) {
+            // clear up global variables
+            try {
+                if (conflictBuilder == null)
+                    conflictBuilder = new android.app.AlertDialog.Builder(SaleMainActivity.this);
+                conflictBuilder.setTitle(st);
+                conflictBuilder.setMessage(R.string.connect_conflict);
+                conflictBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        conflictBuilder = null;
+                        finish();
+                        startActivity(new Intent(SaleMainActivity.this, LoginActivity.class));
+                    }
+                });
+                conflictBuilder.setCancelable(false);
+                conflictBuilder.create().show();
+                isConflict = true;
+            } catch (Exception e) {
+            }
+
+        }
+
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (conflictBuilder != null) {
+            conflictBuilder.create().dismiss();
+            conflictBuilder = null;
+        }
+
+        if(connectionListener != null){
+            EMChatManager.getInstance().removeConnectionListener(connectionListener);
+        }
+
+        try {
+            unregisterReceiver(internalDebugReceiver);
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * 刷新未读消息数
+     */
+    public void updateUnreadLabel() {
+        int count = getUnreadMsgCountTotal();
+        if (count > 0) {
+            unreadLabel.setText(String.valueOf(count));
+            unreadLabel.setVisibility(View.VISIBLE);
+        } else {
+            unreadLabel.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * 获取未读消息数
+     *
+     * @return
+     */
+    public int getUnreadMsgCountTotal() {
+        int unreadMsgCountTotal = 0;
+        int chatroomUnreadMsgCount = 0;
+        unreadMsgCountTotal = EMChatManager.getInstance().getUnreadMsgsCount();
+        for(EMConversation conversation:EMChatManager.getInstance().getAllConversations().values()){
+            if(conversation.getType() == EMConversation.EMConversationType.ChatRoom)
+                chatroomUnreadMsgCount=chatroomUnreadMsgCount+conversation.getUnreadMsgCount();
+        }
+        return unreadMsgCountTotal-chatroomUnreadMsgCount;
+    }
+
+
     private static void setUserHearder(String username, User user) {
         String headerName = null;
         if (!TextUtils.isEmpty(user.getNick())) {
@@ -315,25 +523,24 @@ public class SaleMainActivity extends FragmentActivity {
 
                 @Override
                 public void run() {
-                   /* if (error == EMError.USER_REMOVED) {
+                    if (error == EMError.USER_REMOVED) {
                         // 显示帐号已经被移除
-                        showAccountRemovedDialog();
+//                        showAccountRemovedDialog();
                     } else if (error == EMError.CONNECTION_CONFLICT) {
                         // 显示帐号在其他设备登陆dialog
                         showConflictDialog();
                     } else {
-                        chatHistoryFragment.errorItem.setVisibility(View.VISIBLE);
-                        if (NetUtils.hasNetwork(MainActivity.this))
-                            chatHistoryFragment.errorText.setText(st1);
-                        else
-                            chatHistoryFragment.errorText.setText(st2);
+//                        chatHistoryFragment.errorItem.setVisibility(View.VISIBLE);
+//                        if (NetUtils.hasNetwork(CustomerMainActivity.this))
+//                            chatHistoryFragment.errorText.setText(st1);
+//                        else
+//                            chatHistoryFragment.errorText.setText(st2);
 
-                    }*/
+                    }
                 }
 
             });
         }
-
 
     }
 }

@@ -24,6 +24,7 @@ import com.yingke.shengtai.utils.MethodUtils;
 import com.yingke.shengtai.view.TitleView;
 
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +34,11 @@ import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
  * Created by yanyiheng on 15-8-16.客户列表合同详情
  */
 public class SaleSearchDetailActivity extends BaseActivity implements View.OnClickListener, WaveSwipeRefreshLayout.OnRefreshListener{
-    private TextView yewuNumber, hetongNumber, writeNumber, writePeople, source, progress, time, title;
+    private TextView yewuNumber, hetongNumber, writeNumber, writePeople, progress, time, title, textChage, textTitle;
     private TextView recommentName, totalPrice, price, reCommentPrice, bussinessContent, bussinessJilu;
     private RelativeLayout relContent, relJilu;
     private LinearLayout linearRecommend, linearTotalPrice, linearPrice, recommentPrice;
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
-    private TitleView titleView;
     private BusinesslistEntity data;
     private BussinessDetailData currentData;
     private Type type;
@@ -57,11 +57,12 @@ public class SaleSearchDetailActivity extends BaseActivity implements View.OnCli
     }
 
     private void initUi() {
-        titleView = (TitleView)findViewById(R.id.fragment_title);
-        titleView.getImagePeople().setImageResource(R.mipmap.pen_icon);
-        titleView.getImagePeople().setVisibility(View.VISIBLE);
-        titleView.getImagePeople().setOnClickListener(this);
-        titleView.setTitleView(data.getTitle());
+        textChage = (TextView) findViewById(R.id.textzhuanjie);
+        textTitle = (TextView) findViewById(R.id.view_title_name);
+        textChage.setOnClickListener(this);
+        textChage.setText("修改");
+        textTitle.setText(data.getTitle());
+
         title = (TextView)findViewById(R.id.item_text_title);
         time = (TextView)findViewById(R.id.item_text_time);
         progress = (TextView)findViewById(R.id.item_text_progress);
@@ -78,7 +79,6 @@ public class SaleSearchDetailActivity extends BaseActivity implements View.OnCli
 
         relContent = (RelativeLayout)findViewById(R.id.relContent);
         relJilu = (RelativeLayout)findViewById(R.id.relJilu);
-        source = (TextView)findViewById(R.id.source);
 
         mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) findViewById(R.id.main_swipe);
         mWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
@@ -112,6 +112,13 @@ public class SaleSearchDetailActivity extends BaseActivity implements View.OnCli
             relContent.setOnClickListener(this);
             relJilu.setOnClickListener(this);
         }
+
+        findViewById(R.id.view_title_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SaleSearchDetailActivity.this.finish();
+            }
+        });
 
         type = new TypeToken<BussinessDetailData>(){}.getType();
 
@@ -163,16 +170,19 @@ public class SaleSearchDetailActivity extends BaseActivity implements View.OnCli
                 hetongNumber.setText(currentData.getDetail().getBusinessid());
                 writeNumber.setText(MethodUtils.returnTime(currentData.getDetail().getCreatedate()));
                 writePeople.setText(currentData.getDetail().getCusname());
-                source.setText(currentData.getSaledetail().getChannelname());
                 if(TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getSid(), data.getSid())){
                    if(!TextUtils.isEmpty(currentData.getDetail().getRefereename())){
                        recommentName.setText(currentData.getDetail().getRefereename());
                    }
                     if(!TextUtils.isEmpty(currentData.getDetail().getRefereeamount())){
-                        reCommentPrice.setText(currentData.getDetail().getRefereeamount());
+                        reCommentPrice.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getRefereeamount())));
                     }
-                    totalPrice.setText(currentData.getDetail().getAmount());
-                    price.setText(currentData.getDetail().getSaleamount());
+                    if(!TextUtils.isEmpty(currentData.getDetail().getAmount())){
+                        totalPrice.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getAmount())));
+                    }
+                    if(!TextUtils.isEmpty(currentData.getDetail().getSaleamount())){
+                        price.setText(new DecimalFormat("0.00").format(Double.valueOf(currentData.getDetail().getSaleamount())));
+                    }
                     content = currentData.getDetail().getText();
                 }
                 setRefreFalse();
@@ -192,7 +202,7 @@ public class SaleSearchDetailActivity extends BaseActivity implements View.OnCli
             intent.putExtra("text", content);
             startActivity(intent);
                 break;
-            case R.id.view_title_people:
+            case R.id.textzhuanjie:
                 intent = new Intent(SaleSearchDetailActivity.this, BussinessUpdateActivity.class);
                 intent.putExtra("DATA", currentData);
                 intent.putExtra("FLAG", "update");

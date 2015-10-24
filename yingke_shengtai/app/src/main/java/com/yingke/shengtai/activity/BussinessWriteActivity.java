@@ -41,17 +41,15 @@ public class BussinessWriteActivity extends BaseActivity implements View.OnClick
 
     private WaveSwipeRefreshLayout mWaveSwipeRefreshLayout;
     private View headView;
-    private TitleView titleView;
     private ListView listView;
-    private ImageView avator;
+    private ImageView avator, imageBack;
     private TextView name, phone, time;
     private CustomerListData customerData;
     private ArrayList<BusinesslistEntity> list;
     private BussinessListData data;
     private Type type;
     private BussinessListAdapter adapter;
-//    private FootView footView;
-//    private int flag;
+    private TextView textTitle, textUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +59,16 @@ public class BussinessWriteActivity extends BaseActivity implements View.OnClick
         } else {
             customerData = (CustomerListData)savedInstanceState.getSerializable(Constant.DATA_GUIDE_CENTER);
         }
-        setContentView(R.layout.fragment_guide);
+        setContentView(R.layout.activity_busssiness_list_add);
         initUi();
         mWaveSwipeRefreshLayout.setRefreshing(true);
+
+        findViewById(R.id.view_title_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BussinessWriteActivity.this.finish();
+            }
+        });
 
     }
 
@@ -83,11 +88,13 @@ public class BussinessWriteActivity extends BaseActivity implements View.OnClick
     }
 
     private void initUi() {
-        titleView = (TitleView) findViewById(R.id.fragment_title);
-        titleView.setTitleView(R.string.customer_detail_write);
-        titleView.getImagePeople().setImageResource(R.mipmap.plus_icon);
-        titleView.getImagePeople().setVisibility(View.VISIBLE);
-        titleView.getImagePeople().setOnClickListener(this);
+        textTitle = (TextView) findViewById(R.id.view_title_name);
+        textUpdate = (TextView) findViewById(R.id.textzhuanjie);
+        imageBack = (ImageView) findViewById(R.id.view_title_back);
+
+        textTitle.setText(R.string.customer_detail_write);
+        textUpdate.setOnClickListener(this);
+        imageBack.setOnClickListener(this);
 
         mWaveSwipeRefreshLayout = (WaveSwipeRefreshLayout) findViewById(R.id.main_swipe);
         mWaveSwipeRefreshLayout.setColorSchemeColors(Color.WHITE, Color.WHITE);
@@ -114,7 +121,6 @@ public class BussinessWriteActivity extends BaseActivity implements View.OnClick
         phone.setText(customerData.getUserdetail().getMobile());
         time.setText(MethodUtils.returnTime(customerData.getUserdetail().getRegdate()));
 
-        avator.setImageResource(R.drawable.mini_avatar_shadow);
         headView.findViewById(R.id.msg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,6 +131,12 @@ public class BussinessWriteActivity extends BaseActivity implements View.OnClick
                 startActivity(intent);
             }
         });
+
+        if(TextUtils.equals("0", customerData.getUserdetail().getSex())){
+            avator.setImageResource(R.mipmap.famel_customer);
+        } else {
+            avator.setImageResource(R.mipmap.male_customer);
+        }
         if(TextUtils.isEmpty(customerData.getUserdetail().getImid())){
             headView.findViewById(R.id.msg).setVisibility(View.GONE);
         }
@@ -162,8 +174,6 @@ public class BussinessWriteActivity extends BaseActivity implements View.OnClick
                     setRefreFalse();
                     break;
                 }
-
-
                 if(adapter == null){
                     list.addAll(listData);
                     adapter = new BussinessListAdapter(this, list, listView);
@@ -207,11 +217,14 @@ public class BussinessWriteActivity extends BaseActivity implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.view_title_people:
+            case R.id.textzhuanjie:
                 Intent intent = new Intent(this, BussinessAddActivity.class);
                 intent.putExtra("DATA", customerData);
                 intent.putExtra("FLAG", "add");
                 startActivity(intent);
+                break;
+            case R.id.view_title_back:
+                finish();
                 break;
         }
     }

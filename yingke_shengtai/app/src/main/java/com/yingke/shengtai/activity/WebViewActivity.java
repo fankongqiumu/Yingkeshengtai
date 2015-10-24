@@ -29,6 +29,7 @@ public class WebViewActivity extends Activity{
         }
         setContentView(R.layout.activity_webview);
         initUi();
+
     }
 
     private void initUi() {

@@ -31,10 +31,13 @@ public class LaunchActivity extends Activity {
                 if(TextUtils.isEmpty(MethodUtils.getString(Constant.SHAREDREFERENCE_CONFIG_USER, Constant.SHAREDREFERENCE_CONFIG_USER))){
                     intent = new Intent(LaunchActivity.this, LoginActivity.class);
                 } else {
+                    try{
                     if(TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "1") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "2") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "3") || TextUtils.equals(MyApplication.getInstance().getUserInfor().getUserdetail().getUsertype(), "0")){
                         intent = new Intent(LaunchActivity.this, CustomerMainActivity.class);
                     } else {
                         intent = new Intent(LaunchActivity.this, SaleMainActivity.class);
+                    }}catch (Exception e){
+                        startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
                     }
                 }
                 startActivity(intent);

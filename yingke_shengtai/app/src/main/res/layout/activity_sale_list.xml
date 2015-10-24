@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="70dp"
-    android:background="@color/white_color"
-    >
- <ImageView
-     android:id="@+id/left"
-     android:layout_width="50dp"
-     android:layout_height="50dp"
-     android:layout_marginLeft="10dp"
-     android:scaleType="centerCrop"
-     android:layout_centerVertical="true"
-     android:src="@drawable/mini_avatar_shadow"/>
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@id/left"
-        android:textColor="@color/text_big_color"
-        />
-    <ImageView
-        android:id="@+id/right"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginLeft="10dp"
-        android:scaleType="centerCrop"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        />
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white_color">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <ImageView
+            android:id="@+id/left"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/avator_bg" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/left"
+            android:textColor="@color/text_big_color"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/right"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerCrop" />
+    </RelativeLayout>
 </RelativeLayout>

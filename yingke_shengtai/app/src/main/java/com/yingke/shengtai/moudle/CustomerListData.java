@@ -23,7 +23,17 @@ public class CustomerListData implements Serializable {
     private String businessid;
     private String statusid;
     private String status;
+    private String statusvalue;
     private UserdetailEntity userdetail;
+
+
+    public String getStatusvalue() {
+        return statusvalue;
+    }
+
+    public void setStatusvalue(String statusvalue) {
+        this.statusvalue = statusvalue;
+    }
 
     public void setResult(String result) {
         this.result = result;

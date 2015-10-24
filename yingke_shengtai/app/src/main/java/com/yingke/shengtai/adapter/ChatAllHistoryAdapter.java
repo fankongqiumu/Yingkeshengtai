@@ -14,6 +14,9 @@
 package com.yingke.shengtai.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.BufferType;
@@ -67,7 +71,7 @@ import java.util.Map;
 
 /**
  * 显示所有聊天记录adpater
- * 
+ *
  */
 public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 
@@ -80,16 +84,40 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 	private  Map<String, User> map;
 	private Context context;
 	private UserDao userDao;
+	private String rootIMid;
+	private View view;
+	private ListView listView;
+
+	Handler UIHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			super.handleMessage(msg);
+			if (msg.what == 0) {
+				notifyDataSetChanged();
+			}
+		}
+};
 
 
-	public ChatAllHistoryAdapter(Context context, int textViewResourceId, List<EMConversation> objects) {
+	public ChatAllHistoryAdapter(Context context, int textViewResourceId, List<EMConversation> objects, View view, ListView listView) {
 		super(context, textViewResourceId, objects);
 		this.conversationList = objects;
 		copyConversationList = new ArrayList<EMConversation>();
 		copyConversationList.addAll(objects);
 		inflater = LayoutInflater.from(context);
 		userDao = new UserDao(context);
+		this.view = view;
 		this.context = context;
+		this.listView = listView;
+	}
+
+	public void rootIimid(String rootIMid){
+		this.rootIMid = rootIMid;
+	}
+
+	public void notifys(){
+		super.notifyDataSetChanged();
 	}
 
 	@Override
@@ -140,6 +168,7 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 //				UserUtils.setUserNick(username, holder.name);
 			}
 		}
+
 		if(map == null || map.get(username) == null || TextUtils.isEmpty(map.get(username).getNick())){
 //			holder.name.setText(username);
 			Map<String, String> map = new HashMap<String, String>();
@@ -152,27 +181,40 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 				map.put("sid", MyApplication.getInstance().getUserInfor().getUserdetail().getSid());
 				map.put("uid", "0");
 			}
+			holder.name.setText("");
 			postRequest(holder.name, username, map);
 		} else {
 			holder.name.setText(map.get(username).getNick());
 		}
-		
+
 		if(!(map == null || map.get(username) == null || TextUtils.isEmpty(map.get(username).getSex()))){
 			String sex = map.get(username).getSex();
-			if(TextUtils.isEmpty(MyApplication.getInstance().getUserInfor().getUserdetail().getSid())){
-				if(TextUtils.equals("0", sex)){
-					holder.avatar.setImageResource(R.mipmap.male_yewu);
-				} else {
-					holder.avatar.setImageResource(R.mipmap.meal_yewu);
-				}
-			} else {
-				if(TextUtils.equals("0", sex)){
-					holder.avatar.setImageResource(R.mipmap.male_customer);
-				} else {
-					holder.avatar.setImageResource(R.mipmap.famel_customer);
-				}
+			if(TextUtils.equals("0", sex)){
+				holder.avatar.setImageResource(R.mipmap.male_yewu);
 			}
-		} 
+
+			if(TextUtils.equals("1", sex)){
+				holder.avatar.setImageResource(R.mipmap.meal_yewu);
+			}
+			holder.avatar.setVisibility(View.VISIBLE);
+
+
+		} else {
+			holder.avatar.setVisibility(View.GONE);
+			if((map != null &&  map.get(username) != null) && !TextUtils.isEmpty(map.get(username).getNick())){
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("imid", username);
+				map.put("token", MyApplication.getInstance().getUserInfor().getUserdetail().getToken());
+				if(TextUtils.isEmpty(MyApplication.getInstance().getUserInfor().getUserdetail().getSid())){
+					map.put("sid", "0");
+					map.put("uid", MyApplication.getInstance().getUserInfor().getUserdetail().getUid());
+				} else {
+					map.put("sid", MyApplication.getInstance().getUserInfor().getUserdetail().getSid());
+					map.put("uid", "0");
+				}
+				postRequest(holder.name, username, map);
+			}
+		}
 
 		if (conversation.getUnreadMsgCount() > 0) {
 			// 显示与此用户的消息未读数
@@ -220,18 +262,20 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 
 			@Override
 			public void onResponse(Response response) throws IOException {
-				if(response.isSuccessful()){
+				if (response.isSuccessful()) {
 					String json = response.body().string();
-					ImidToNickNameData data = JosnUtil.gson.fromJson(json, new TypeToken<ImidToNickNameData>(){}.getType());
-					if(data != null && TextUtils.equals("1", "1")){
+					ImidToNickNameData data = JosnUtil.gson.fromJson(json, new TypeToken<ImidToNickNameData>() {
+					}.getType());
+					if (data != null && TextUtils.equals("1", "1")) {
 						try {
-							User user = new User();
-							user.setNick(data.getDetaillist().get(0).getDisplayname());
-							user.setUsername(data.getDetaillist().get(0).getImid());
-							user.setSex(data.getDetaillist().get(0).getSex());
-							userDao.saveContactsss(user);
-                            notifyDataSetChanged();
-						} catch ( Exception e){
+
+								User user = new User();
+								user.setNick(data.getDetaillist().get(0).getDisplayname());
+								user.setUsername(data.getDetaillist().get(0).getImid());
+								user.setSex(data.getDetaillist().get(0).getSex());
+								userDao.saveContactsss(user);
+								UIHandler.sendEmptyMessage(0);
+						} catch (Exception e) {
 
 						}
 					}
@@ -241,6 +285,9 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 			}
 		});
 	}
+
+
+
 
 
 	public String getName(String username){
@@ -253,7 +300,7 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 
 	/**
 	 * 根据消息内容和消息类型获取消息内容提示
-	 * 
+	 *
 	 * @param message
 	 * @param context
 	 * @return
@@ -286,7 +333,7 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 			digest = getStrng(context, R.string.video);
 			break;
 		case TXT: // 文本消息
-			
+
 			if(((DemoHXSDKHelper)HXSDKHelper.getInstance()).isRobotMenuMessage(message)){
 				digest = ((DemoHXSDKHelper)HXSDKHelper.getInstance()).getRobotMenuMessageDigest(message);
 			}else if(message.getBooleanAttribute(Constant.MESSAGE_ATTR_IS_VOICE_CALL,false)){
@@ -329,8 +376,8 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 	String getStrng(Context context, int resId) {
 		return context.getResources().getString(resId);
 	}
-	
-	
+
+
 
 	@Override
 	public Filter getFilter() {
@@ -339,7 +386,7 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 		}
 		return conversationFilter;
 	}
-	
+
 	private class ConversationFilter extends Filter {
 		List<EMConversation> mOriginalValues = null;
 
@@ -365,7 +412,7 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 				for (int i = 0; i < count; i++) {
 					final EMConversation value = mOriginalValues.get(i);
 					String username = value.getUserName();
-					
+
 					EMGroup group = EMGroupManager.getInstance().getGroup(username);
 					if(group != null){
 						username = group.getGroupName();
@@ -408,7 +455,7 @@ public class ChatAllHistoryAdapter extends ArrayAdapter<EMConversation> {
 		}
 
 	}
-	
+
 	@Override
 	public void notifyDataSetChanged() {
 	    super.notifyDataSetChanged();

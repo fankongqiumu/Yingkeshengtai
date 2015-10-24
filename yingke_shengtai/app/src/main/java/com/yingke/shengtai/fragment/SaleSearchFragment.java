@@ -172,6 +172,10 @@ public class SaleSearchFragment extends BaseFragment implements FootView.Loading
             case TAG_SALE_YEJI_LIST:
                 data = JosnUtil.gson.fromJson(json, type);
                 ArrayList<GainlistEntity> listData = (ArrayList)data.getGainlist();
+                if(listData == null){
+                    MethodUtils.showToast(getActivity(), "暂无数据", Toast.LENGTH_SHORT);
+                    break;
+                }
                 if(TextUtils.equals(data.getResult(), "0") || listData.size() <= 0){
                     MethodUtils.showToast(getActivity(), data.getMessage(), Toast.LENGTH_SHORT);
                     setRefreFalse();
